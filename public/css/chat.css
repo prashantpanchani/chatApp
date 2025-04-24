@@ -1,0 +1,98 @@
+/* Center the whole page content */
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+  }
+  
+  /* Header */
+  h2 {
+    margin-top: 1em;
+    font-size: 1.5rem;
+  }
+  
+  /* Outer container */
+  .chat-container {
+    width: 80%;
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  /* Chat and sidebar layout */
+  .chat-row {
+    display: flex;
+    flex-direction: row;
+    width: 80%;
+    height: 450px;
+    justify-content: center;
+  }
+  
+  /* Message area */
+  .message-area {
+    width: 70%;
+    border: 1px solid black;
+    border-radius: 0.5rem;
+    height: 100%;
+  }
+  
+  /* Sidebar */
+  .sidebar {
+    width: 20%;
+    border: 1px solid black;
+    border-radius: 0.5rem;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  /* Sidebar header */
+  .sidebar-header {
+    height: 15%;
+    background-color: aqua;
+    border: 1px solid black;
+    width: 98%;
+  }
+  
+  /* Sidebar body */
+  .sidebar-body {
+    height: 85%;
+    background-color: bisque;
+    width: 98%;
+  }
+  
+  /* Message input row */
+  .input-row {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    width: 80%;
+    margin-top: 1em;
+  }
+  
+  /* Message input */
+  .message-input {
+    width: 40%;
+    border: 1px solid black;
+    border-radius: 0.5rem;
+    height: 2em;
+    padding-left: 10px;
+  }
+  
+  /* Send button */
+  .send-button {
+    width: 10%;
+    background-color: black;
+    color: white;
+    margin-left: 2%;
+    border: 1px solid black;
+    border-radius: 0.5rem;
+    cursor: pointer;
+  }
+  

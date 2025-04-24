@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home</title>
+    <link rel="stylesheet" href="/css/index.css" />
+</head>
+<body>
+    <div class="chat-container">
+      <h2>Welcome to the home page of ChatApp</h2>
+      <input type="text" placeholder="Type Your Username.." class="username-input" />
+      <button class="join-btn">Join Chat</button>
+    </div>
+    <script>
+        const joinBtn = document.querySelector('.join-btn');
+        const usernameInput = document.querySelector('.username-input');
+        joinBtn.addEventListener('click', () => {
+            const username = usernameInput.value;
+            if (username) {
+                localStorage.setItem('username', username);
+                console.log(window.location.href)
+                window.location.href = '/chat';
+            } else {
+                alert('Please enter a username');
+            }
+        });
+    </script>
+  </body>
+  
+</html>
