@@ -1,6 +1,7 @@
 /* Center the whole page content */
 body {
     display: flex;
+    background-color: antiquewhite;
     justify-content: center;
     align-items: center;
     flex-direction: column;
@@ -11,6 +12,11 @@ body {
   
   /* Header */
   h2 {
+    background-color: #bab5b5;
+    color: white;
+    border: 1px solid #bab5b5;
+    border-radius: 0.5em;
+    padding: 1%;
     margin-top: 1em;
     font-size: 1.5rem;
   }
@@ -35,16 +41,21 @@ body {
   
   /* Message area */
   .message-area {
+    background-color: whitesmoke;
     width: 70%;
     border: 1px solid black;
     border-radius: 0.5rem;
     height: 100%;
+    text-align: right;
+    /* padding-right: 20px; */
+    display: block;
+    overflow-y: auto;
   }
   
   /* Sidebar */
   .sidebar {
     width: 20%;
-    border: 1px solid black;
+    /* border: 1px solid black; */
     border-radius: 0.5rem;
     height: 100%;
     display: flex;
@@ -54,16 +65,27 @@ body {
   
   /* Sidebar header */
   .sidebar-header {
-    height: 15%;
-    background-color: aqua;
+    background-color: whitesmoke;
+    height: 14%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 1px;
+    border-radius: 6px;
     border: 1px solid black;
     width: 98%;
   }
   
   /* Sidebar body */
   .sidebar-body {
+    background-color: whitesmoke;
     height: 85%;
-    background-color: bisque;
+    justify-content: center;
+    align-items: center;
+    margin: 1px;
+    margin-bottom: 0;
+    border-radius: 6px;
+    border: 1px solid black;
     width: 98%;
   }
   
@@ -73,15 +95,16 @@ body {
     flex-direction: row;
     justify-content: center;
     width: 80%;
+    height: 20%;
     margin-top: 1em;
   }
   
   /* Message input */
   .message-input {
-    width: 40%;
+    width: 50%;
     border: 1px solid black;
     border-radius: 0.5rem;
-    height: 2em;
+    height: 2.5em;
     padding-left: 10px;
   }
   
@@ -94,5 +117,10 @@ body {
     border: 1px solid black;
     border-radius: 0.5rem;
     cursor: pointer;
+
+  }
+
+  .send-button:active {
+    opacity: 0.5;
   }
   
