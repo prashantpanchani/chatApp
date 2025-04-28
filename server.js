@@ -16,11 +16,18 @@ app.use(express.urlencoded({ extended: true }))
 
 
 const PORT = process.env.PORT || 3000
-
+const users = {}
 io.on('connection', (socket) => {
-
+    socket.on('set_username', (username) => {
+        users[socket.id] = username
+        socket.broadcast.emit('new_user_connected', { username })
+    })
     socket.on('chat message', (msg) => {
         io.emit('chat message', msg)
+    })
+    socket.on('disconnect', () => {
+        const username = users[socket.id];
+        socket.broadcast.emit('user_disconnected', { username });
     })
 
 })

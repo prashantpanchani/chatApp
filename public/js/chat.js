@@ -1,10 +1,10 @@
 
 const socket = io("ws://localhost:3000");
-
+const username = localStorage.getItem("username");
+socket.emit('set_username', username)
 
 const sidebarHeader = document.querySelector(".sidebar-header");
 const usernamePar = document.createElement("p");
-const username = localStorage.getItem("username");
 usernamePar.innerText = "username :" + (username ?? 'Guest');
 sidebarHeader.appendChild(usernamePar)
 
@@ -42,7 +42,37 @@ socket.on("chat message", (msg) => {
     messageArea.appendChild(outerDiv);
 });
 
-socket.on("connect", (socket) => {
+socket.on("new_user_connected", (data) => {
+    Toastify({
+        text: `${data.username} connected`,
+        duration: 5000,
+        destination: "https://github.com/apvarun/toastify-js",
+        newWindow: true,
+        close: true,
+        gravity: "top",
+        position: "right",
+        stopOnFocus: true,
+        style: {
+            background: "linear-gradient(to right, #00b09b, #96c93d)",
+        },
+        onClick: function () { } // Callback after click
+    }).showToast();
     console.log(`${localStorage.getItem("username")} connected `);
 });
-socket.on("disconnect", () => { });
+socket.on("user_disconnected", (data) => {
+
+    Toastify({
+        text: `${data.username} disconnected`,
+        duration: 3000,
+        destination: "https://github.com/apvarun/toastify-js",
+        newWindow: true,
+        close: true,
+        gravity: "top",
+        position: "right",
+        stopOnFocus: true,
+        style: {
+            background: "linear-gradient(to right, #00b09b, #96c93d)",
+        },
+        onClick: function () { } // Callback after click
+    }).showToast();
+});
