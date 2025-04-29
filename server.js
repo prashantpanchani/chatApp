@@ -18,6 +18,7 @@ app.use(express.urlencoded({ extended: true }))
 const PORT = process.env.PORT || 3000
 const users = {}
 io.on('connection', (socket) => {
+
     socket.on('set_username', (username) => {
         users[socket.id] = username
         socket.broadcast.emit('new_user_connected', { username })
@@ -25,8 +26,15 @@ io.on('connection', (socket) => {
     socket.on('chat message', (msg) => {
         io.emit('chat message', msg)
     })
+
+    //typing indicator
+    socket.on('user input', (data) => {
+        socket.broadcast.emit('user_typing_status', data)
+    })
+
     socket.on('disconnect', () => {
         const username = users[socket.id];
+        delete users[socket.id];
         socket.broadcast.emit('user_disconnected', { username });
     })
 

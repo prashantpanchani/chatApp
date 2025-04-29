@@ -42,6 +42,27 @@ socket.on("chat message", (msg) => {
     messageArea.appendChild(outerDiv);
 });
 
+//typing indicator
+const input = document.querySelector(".message-input");
+input.addEventListener('focus', () => {
+    socket.emit('user input', { username, typing: true })
+})
+input.addEventListener('blur', () => {
+    socket.emit('user input', { username, typing: false })
+})
+socket.on('user_typing_status', (data) => {
+    const { username: typingUsername, typing } = data
+    const p = document.querySelector('.indicator-p');
+    if (typing && typingUsername !== username) {
+        p.innerText = `${typingUsername} is Typing...`
+    } else {
+        p.innerText = ''
+    }
+})
+
+
+
+
 socket.on("new_user_connected", (data) => {
     Toastify({
         text: `${data.username} connected`,
