@@ -1,16 +1,19 @@
 
 const socket = io("ws://localhost:3000");
 const username = localStorage.getItem("username");
+
 socket.emit('set_username', username)
 
+//showing username
 const sidebarHeader = document.querySelector(".sidebar-header");
 const usernamePar = document.createElement("p");
 usernamePar.innerText = "username :" + (username ?? 'Guest');
 sidebarHeader.appendChild(usernamePar)
 
-const sendButton = document.querySelector(".send-button");
 
-sendButton.addEventListener("click", () => {
+const messageForm = document.querySelector("#messageForm")
+messageForm.addEventListener("submit", (e) => {
+    e.preventDefault()
     const input = document.querySelector(".message-input");
     if (input.value) {
         const timestamp = new Date().toLocaleTimeString();
@@ -22,8 +25,10 @@ sendButton.addEventListener("click", () => {
         input.value = "";
     }
 });
+
+//showing user messages
 socket.on("chat message", (msg) => {
-    console.log(msg);
+
     const messageArea = document.querySelector(".message-area");
     const outerDiv = document.createElement("div");
     const messagePar = document.createElement("p");
@@ -34,6 +39,7 @@ socket.on("chat message", (msg) => {
     outerDiv.style.backgroundColor = "#bab5b5";
     outerDiv.style.borderRadius = "0.7em";
     messagePar.style.margin = "auto";
+
     messagePar.innerText = msg.username + " : " + msg.message;
     timeSpan.innerText = msg.timestamp;
 
@@ -60,10 +66,22 @@ socket.on('user_typing_status', (data) => {
     }
 })
 
+let ul = document.querySelector('.sidebar-ul')
+ul.style.marginTop = "1%"
+ul.style.listStyleType = 'none'
 
-
-
+//new user notification and onlines users
 socket.on("new_user_connected", (data) => {
+    ul.innerHTML = ""
+    const { users } = data;
+    for (const key in users) {
+        if (username !== users[key]) {
+            let li = document.createElement('li')
+            li.innerHTML = users[key]
+            li.setAttribute('id', users[key])
+            ul.append(li)
+        }
+    }
     Toastify({
         text: `${data.username} connected`,
         duration: 5000,
@@ -80,7 +98,34 @@ socket.on("new_user_connected", (data) => {
     }).showToast();
     console.log(`${localStorage.getItem("username")} connected `);
 });
+
+//
+socket.on('online user', (data) => {
+    ul.innerHTML = ""
+    const { users } = data;
+    for (const key in users) {
+        if (username !== users[key]) {
+            let li = document.createElement('li')
+            li.innerHTML = users[key]
+            li.setAttribute('id', users[key])
+            ul.append(li)
+        }
+    }
+})
+
+//user disconnection notification and online users
 socket.on("user_disconnected", (data) => {
+    let sidebar_body = document.querySelector('.sidebar-body')
+    ul.innerHTML = ''
+    const { users } = data;
+    for (const key in users) {
+        if (username !== users[key]) {
+            let li = document.createElement('li')
+            li.innerHTML = users[key]
+            li.setAttribute('id', users[key])
+            ul.append(li)
+        }
+    }
 
     Toastify({
         text: `${data.username} disconnected`,

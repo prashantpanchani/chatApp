@@ -18,19 +18,26 @@
         <div class="message-area"></div>
         <div class="sidebar">
           <div class="sidebar-header"></div>
-          <div class="sidebar-body"></div>
+          <div class="sidebar-body">
+            <span>Online Users:</span>
+            <div>
+              <ul class="sidebar-ul"></ul>
+            </div>
+          </div>
         </div>
       </div>
       <div class="input-indicator">
         <p class="indicator-p"></p>
       </div>
       <div class="input-row">
-        <input
-          type="text"
-          placeholder="Type Your Message.."
-          class="message-input"
-        />
-        <button class="send-button" type="submit">Send</button>
+        <form action="" id="messageForm">
+          <input
+            type="text"
+            placeholder="Type Your Message.."
+            class="message-input"
+          />
+          <button class="send-button" type="submit">Send</button>
+        </form>
       </div>
     </div>
     <script src="/socket.io/socket.io.js"></script>

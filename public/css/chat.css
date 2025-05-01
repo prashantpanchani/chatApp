@@ -51,6 +51,9 @@ body {
     display: block;
     overflow-y: auto;
   }
+  #message-from {
+    width: 100%;
+  }
   
   /* Sidebar */
   .sidebar {
@@ -87,21 +90,30 @@ body {
     border-radius: 6px;
     border: 1px solid black;
     width: 98%;
+    overflow-y: auto;
+  }
+  .sidebar-ul {
+    margin-top: 1%;
+    list-style-type: none;
   }
   
+  .sidebar-ul li {
+    padding: 1px;
+  }
   /* Message input row */
   .input-row {
-    display: flex;
-    flex-direction: row;
+    /* display: flex; */
+    /* flex-direction: row; */
     justify-content: center;
     width: 80%;
-    height: 20%;
-    margin-top: 1em;
+    align-items: center;
+    padding-left: 105px;
+    /* margin-top: 1em; */
   }
   
   /* Message input */
   .message-input {
-    width: 50%;
+    width: 55%;
     border: 1px solid black;
     border-radius: 0.5rem;
     height: 2.5em;
@@ -110,17 +122,22 @@ body {
   
   /* Send button */
   .send-button {
-    width: 10%;
+    padding: 0.5em 1em;
     background-color: black;
     color: white;
-    margin-left: 2%;
     border: 1px solid black;
     border-radius: 0.5rem;
+    margin-left: 1em;
+    height: 2.5em;
+    width: 6em;
     cursor: pointer;
+    
 
   }
 
   .send-button:active {
     opacity: 0.5;
   }
+  
+
   

@@ -3,42 +3,17 @@ const { chatRouter } = require('./routes/chatRoutes')
 require('dotenv').config()
 const path = require('path')
 const { Server } = require("socket.io");
-const { createServer } = require('http')
-const app = express()
-app.use('/public', express.static(path.join(__dirname, '/public')));
+const { createServer } = require('http');
+const chatSocket = require('./socket/chatSocket');
 
+const app = express()
 const httpserver = createServer(app)
 const io = new Server(httpserver, {});
 
-app.use(express.json())
-app.use(express.urlencoded({ extended: true }))
-
-
-
+app.use('/public', express.static(path.join(__dirname, '/public')));
 const PORT = process.env.PORT || 3000
-const users = {}
-io.on('connection', (socket) => {
 
-    socket.on('set_username', (username) => {
-        users[socket.id] = username
-        socket.broadcast.emit('new_user_connected', { username })
-    })
-    socket.on('chat message', (msg) => {
-        io.emit('chat message', msg)
-    })
-
-    //typing indicator
-    socket.on('user input', (data) => {
-        socket.broadcast.emit('user_typing_status', data)
-    })
-
-    socket.on('disconnect', () => {
-        const username = users[socket.id];
-        delete users[socket.id];
-        socket.broadcast.emit('user_disconnected', { username });
-    })
-
-})
+chatSocket(io)
 
 app.use(chatRouter)
 httpserver.listen(PORT, () => {
