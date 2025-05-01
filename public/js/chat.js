@@ -1,5 +1,5 @@
 
-const socket = io("ws://localhost:3000");
+const socket = io();
 const username = localStorage.getItem("username");
 
 socket.emit('set_username', username)
