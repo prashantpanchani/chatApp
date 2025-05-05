@@ -38,6 +38,7 @@ socket.on("chat message", (msg) => {
     outerDiv.style.padding = "2%";
     outerDiv.style.backgroundColor = "#bab5b5";
     outerDiv.style.borderRadius = "0.7em";
+    outerDiv.style.wordWrap = "break-word"
     messagePar.style.margin = "auto";
 
     messagePar.innerText = msg.username + " : " + msg.message;
@@ -70,8 +71,7 @@ let ul = document.querySelector('.sidebar-ul')
 ul.style.marginTop = "1%"
 ul.style.listStyleType = 'none'
 
-//new user notification and onlines users
-socket.on("new_user_connected", (data) => {
+function onlineUser(data) {
     ul.innerHTML = ""
     const { users } = data;
     for (const key in users) {
@@ -82,8 +82,27 @@ socket.on("new_user_connected", (data) => {
             ul.append(li)
         }
     }
+}
+//new user notification and onlines users
+socket.on("new_user_connected", (data) => {
+    const messageArea = document.querySelector(".message-area");
+    const outerDiv = document.createElement("div");
+    const messagePar = document.createElement("p");
+
+    outerDiv.style.margin = "1%";
+    outerDiv.style.padding = "2%";
+    outerDiv.style.backgroundColor = "#bab5b5";
+    outerDiv.style.borderRadius = "0.7em";
+
+    messagePar.innerText = `${data.username} Joined chat`
+    outerDiv.append(messagePar)
+    messageArea.append(outerDiv)
+    setTimeout(() => { outerDiv.remove() }, 3000)
+
+
+    onlineUser(data)
     Toastify({
-        text: `${data.username} connected`,
+        text: `${data.username} Joined`,
         duration: 5000,
         destination: "https://github.com/apvarun/toastify-js",
         newWindow: true,
@@ -101,34 +120,28 @@ socket.on("new_user_connected", (data) => {
 
 //
 socket.on('online user', (data) => {
-    ul.innerHTML = ""
-    const { users } = data;
-    for (const key in users) {
-        if (username !== users[key]) {
-            let li = document.createElement('li')
-            li.innerHTML = users[key]
-            li.setAttribute('id', users[key])
-            ul.append(li)
-        }
-    }
+    onlineUser(data)
 })
 
 //user disconnection notification and online users
 socket.on("user_disconnected", (data) => {
-    let sidebar_body = document.querySelector('.sidebar-body')
-    ul.innerHTML = ''
-    const { users } = data;
-    for (const key in users) {
-        if (username !== users[key]) {
-            let li = document.createElement('li')
-            li.innerHTML = users[key]
-            li.setAttribute('id', users[key])
-            ul.append(li)
-        }
-    }
+    const messageArea = document.querySelector(".message-area");
+    const outerDiv = document.createElement("div");
+    const messagePar = document.createElement("p");
+
+    outerDiv.style.margin = "1%";
+    outerDiv.style.padding = "2%";
+    outerDiv.style.backgroundColor = "#bab5b5";
+    outerDiv.style.borderRadius = "0.7em";
+
+    messagePar.innerText = `${data.username} Left chat`
+    outerDiv.append(messagePar)
+    messageArea.append(outerDiv)
+    setTimeout(() => { outerDiv.remove() }, 3000)
+    onlineUser(data)
 
     Toastify({
-        text: `${data.username} disconnected`,
+        text: `${data.username} Left`,
         duration: 3000,
         destination: "https://github.com/apvarun/toastify-js",
         newWindow: true,

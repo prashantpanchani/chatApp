@@ -1,5 +1,5 @@
 module.exports = function chatSocket(io) {
-    const users = {}
+    const users = {};
     io.on('connection', (socket) => {
 
         socket.on('set_username', (username) => {
