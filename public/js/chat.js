@@ -1,8 +1,9 @@
 
 const socket = io();
 const username = localStorage.getItem("username");
-
-socket.emit('set_username', username)
+const roomId = localStorage.getItem('roomId')
+const user = { username, roomId }
+socket.emit('initiateChat', user)
 
 //showing username
 const sidebarHeader = document.querySelector(".sidebar-header");
@@ -16,7 +17,11 @@ messageForm.addEventListener("submit", (e) => {
     e.preventDefault()
     const input = document.querySelector(".message-input");
     if (input.value) {
-        const timestamp = new Date().toLocaleTimeString();
+        const timestamp = new Date().toLocaleTimeString('en-US', {
+            hour: '2-digit',
+            minute: '2-digit',
+            hour12: true
+        });
         socket.emit("chat message", {
             message: input.value,
             timestamp,
@@ -73,15 +78,19 @@ ul.style.listStyleType = 'none'
 
 function onlineUser(data) {
     ul.innerHTML = ""
-    const { users } = data;
-    for (const key in users) {
-        if (username !== users[key]) {
+    const userList = data.userList
+    userList.forEach(element => {
+        if (element !== username) {
             let li = document.createElement('li')
-            li.innerHTML = users[key]
-            li.setAttribute('id', users[key])
+            li.innerHTML = `${element}`
             ul.append(li)
+
         }
-    }
+    });
+
+
+
+
 }
 //new user notification and onlines users
 socket.on("new_user_connected", (data) => {

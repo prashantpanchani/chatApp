@@ -34,6 +34,14 @@ body {
     margin-top: 2%;
     padding-left: 10px;
   }
+  .userRoomId {
+    width: 50%;
+    height: 30px;
+    border-radius: 5px;
+    border: 1px solid grey;
+    margin-top: 2%;
+    padding-left: 10px;
+  }
   
   /* Button styling */
   .join-btn {

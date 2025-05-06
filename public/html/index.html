@@ -15,18 +15,22 @@
         placeholder="Type Your Username.."
         class="username-input"
       />
+      <input type="text" placeholder="Enter Room Id" class="userRoomId" />
       <button class="join-btn">Join Chat</button>
     </div>
     <script>
       const joinBtn = document.querySelector(".join-btn");
       const usernameInput = document.querySelector(".username-input");
+      const userRoomId = document.querySelector(".userRoomId");
       joinBtn.addEventListener("click", () => {
         const username = usernameInput.value;
-        if (username) {
+        const roomId = userRoomId.value;
+        if (username && roomId) {
           localStorage.setItem("username", username);
+          localStorage.setItem("roomId", roomId);
           window.location.href = "/chat";
         } else {
-          alert("Please enter a username");
+          alert("Please enter all Details");
         }
       });
     </script>
