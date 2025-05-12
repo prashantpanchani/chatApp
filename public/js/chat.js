@@ -11,6 +11,29 @@ const usernamePar = document.createElement("p");
 usernamePar.innerText = "username :" + (username ?? 'Guest');
 sidebarHeader.appendChild(usernamePar)
 
+socket.on('previousMessage', (messages) => {
+    const messageArea = document.querySelector(".message-area");
+    messageArea.scrollTop = messageArea.scrollHeight;
+    messages.forEach(msg => {
+        const outerDiv = document.createElement("div");
+        const messagePar = document.createElement("p");
+        const timeSpan = document.createElement("span");
+
+        outerDiv.style.margin = "1%";
+        outerDiv.style.padding = "2%";
+        outerDiv.style.backgroundColor = "#bab5b5";
+        outerDiv.style.borderRadius = "0.7em";
+        outerDiv.style.wordWrap = "break-word"
+        messagePar.style.margin = "auto";
+
+        messagePar.innerText = msg.username + " : " + msg.messageText;
+        timeSpan.innerText = msg.timestamp;
+
+        outerDiv.appendChild(messagePar);
+        outerDiv.appendChild(timeSpan);
+        messageArea.appendChild(outerDiv);
+    })
+})
 
 const messageForm = document.querySelector("#messageForm")
 messageForm.addEventListener("submit", (e) => {

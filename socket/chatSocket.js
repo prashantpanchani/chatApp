@@ -1,12 +1,21 @@
+const Message = require("../models/message");
+
 module.exports = function chatSocket(io) {
     const users = {};
 
     io.on('connection', (socket) => {
 
-        socket.on('initiateChat', (user) => {
+        socket.on('initiateChat', async (user) => {
             users[socket.id] = { username: user.username, roomId: user.roomId }
-            // console.log(users[socket.id])
             socket.join(user.roomId)
+            async function getMessage() {
+                const messages = await Message.find({ roomId: user.roomId })
+                    .sort({ _id: -1 })
+                    .limit(20)
+                return messages.reverse()
+            }
+            const messages = await getMessage()
+            io.to(user.roomId).emit('previousMessage', messages)
             const userList = Object.values(users)
                 .filter(u => u.roomId === user.roomId)
                 .map(u => u.username);
@@ -17,10 +26,15 @@ module.exports = function chatSocket(io) {
 
 
 
-        socket.on('chat message', (msg) => {
-            console.log(msg)
+        socket.on('chat message', async (msg) => {
             const user = users[socket.id]
             if (user) {
+                const message = await Message.create({
+                    messageText: msg.message,
+                    timestamp: msg.timestamp,
+                    username: msg.username,
+                    roomId: users[socket.id].roomId
+                })
                 io.to(user.roomId).emit('chat message', msg)
 
             }
