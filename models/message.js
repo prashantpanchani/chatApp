@@ -13,7 +13,7 @@ const messageSchema = new mongoose.Schema({
         type: String,
         require: true,
     },
-    roomId: Number
+    roomId: String
     // {
     //     type: mongoose.Schema.Types.ObjectId,
     //     ref: 'Room'

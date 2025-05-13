@@ -54,6 +54,17 @@ body {
   #message-from {
     width: 100%;
   }
+  .outerDivMessageArea {
+    margin : 1%;
+    padding : 2%;
+    background-color : #bab5b5;
+    border-radius: 0.7em;
+    word-wrap:break-word;
+  }
+  .messageParMessageArea {
+    margin: auto;
+  }
+  
   
   /* Sidebar */
   .sidebar {
@@ -64,6 +75,7 @@ body {
     display: flex;
     flex-direction: column;
     align-items: center;
+    white-space:pre-line;
   }
   
   /* Sidebar header */
@@ -77,6 +89,7 @@ body {
     border-radius: 6px;
     border: 1px solid black;
     width: 98%;
+    white-space: pre-line;
   }
   
   /* Sidebar body */
@@ -113,7 +126,7 @@ body {
   
   /* Message input */
   .message-input {
-    width: 55%;
+    width: 95%;
     border: 1px solid black;
     border-radius: 0.5rem;
     height: 2.5em;
@@ -129,7 +142,7 @@ body {
     border-radius: 0.5rem;
     margin-left: 1em;
     height: 2.5em;
-    width: 6em;
+    width: 80%;
     cursor: pointer;
     
 

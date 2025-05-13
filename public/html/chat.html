@@ -19,7 +19,7 @@
         <div class="sidebar">
           <div class="sidebar-header"></div>
           <div class="sidebar-body">
-            <span>Online Users:</span>
+            <span class="sidebar-header-head">Online Users:</span>
             <div>
               <ul class="sidebar-ul"></ul>
             </div>
@@ -31,12 +31,24 @@
       </div>
       <div class="input-row">
         <form action="" id="messageForm">
-          <input
-            type="text"
-            placeholder="Type Your Message.."
-            class="message-input"
-          />
-          <button class="send-button" type="submit">Send</button>
+          <div style="display: flex">
+            <div style="display: flex; flex-direction: column; width: 70%">
+              <input
+                type="text"
+                placeholder="Type Your Message.."
+                class="message-input"
+              />
+              <div style="margin-top: 1rem">
+                <label for="fileElement">Select Some File : </label>
+                <input type="file" name="" id="fileElement" />
+                <button type="button" class="fileUploadButton">Upload</button>
+                <!-- <input type="submit" value="Upload File" /> -->
+              </div>
+            </div>
+            <div style="width: 20%">
+              <button class="send-button" type="submit">Send</button>
+            </div>
+          </div>
         </form>
       </div>
     </div>
