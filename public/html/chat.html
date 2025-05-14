@@ -11,6 +11,7 @@
       href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css"
     />
   </head>
+
   <body>
     <h2>Chat Room</h2>
     <div class="chat-container">
@@ -19,7 +20,7 @@
         <div class="sidebar">
           <div class="sidebar-header"></div>
           <div class="sidebar-body">
-            <span class="sidebar-header-head">Online Users:</span>
+            <span>Online Users:</span>
             <div>
               <ul class="sidebar-ul"></ul>
             </div>
@@ -40,7 +41,12 @@
               />
               <div style="margin-top: 1rem">
                 <label for="fileElement">Select Some File : </label>
-                <input type="file" name="" id="fileElement" />
+                <input
+                  type="file"
+                  name=""
+                  id="fileElement"
+                  accept="image/*,video/*"
+                />
                 <button type="button" class="fileUploadButton">Upload</button>
                 <!-- <input type="submit" value="Upload File" /> -->
               </div>

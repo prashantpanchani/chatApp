@@ -11,6 +11,7 @@
     <div class="chat-container">
       <h2>Welcome to the home page of ChatApp</h2>
       <input
+        maxlength="15"
         type="text"
         placeholder="Type Your Username.."
         class="username-input"
@@ -30,7 +31,7 @@
           localStorage.setItem("roomId", roomId);
           window.location.href = "/chat";
         } else {
-          alert("Please enter all Details");
+          alert("Please Enter Valid Details");
         }
       });
     </script>

@@ -1,3 +1,4 @@
+const Media = require("../models/media");
 const Message = require("../models/message");
 
 module.exports = function chatSocket(io) {
@@ -14,31 +15,60 @@ module.exports = function chatSocket(io) {
                 .filter(u => u.roomId === user.roomId)
                 .map(u => u.username);
             socket.broadcast.to(user.roomId).emit('new_user_connected', { username: user.username, userList })
-
         })
         socket.on('userJoin', async (user) => {
             async function getMessage() {
                 if (user) {
                     const messages = await Message.find({ roomId: user.roomId })
                         .sort({ _id: -1 })
-                        .limit(20)
+                        .limit(20).populate('media_id')
                     return messages.reverse()
                 }
             }
             const messages = await getMessage()
             io.to(socket.id).emit('previousMessage', messages)
-
         })
 
         socket.on('chat message', async (msg) => {
             const user = users[socket.id]
             if (user) {
-                const message = await Message.create({
-                    messageText: msg.messageText,
-                    timestamp: msg.timestamp,
-                    username: msg.username,
-                    roomId: users[socket.id].roomId
+                if (!msg.fileUrl) {
+                    const message = await Message.create({
+                        messageText: msg.messageText,
+                        timestamp: msg.timestamp,
+                        username: msg.username,
+                        roomId: user.roomId
+                    })
+                    io.to(user.roomId).emit('chat message', msg)
+                }
+            }
+        })
+        socket.on('media upload', async (msg) => {
+            const user = users[socket.id]
+            if (user) {
+                let url = msg.fileUrl
+                const roomId = users[socket.id].roomId
+                const MediaMessage = await Media.create({
+                    url: msg.fileUrl,
+                    media_type: (url.includes('video') ? 'video' : 'image')
                 })
+                console.log(MediaMessage._id)
+                if (!msg.messageText) {
+                    const message = await Message.create({
+                        timestamp: msg.timestamp,
+                        username: msg.username,
+                        roomId: roomId,
+                        media_id: MediaMessage._id
+                    })
+                } else {
+                    const message = await Message.create({
+                        messageText: msg.messageText,
+                        timestamp: msg.timestamp,
+                        username: msg.username,
+                        roomId: roomId,
+                        media_id: MediaMessage._id
+                    })
+                }
                 io.to(user.roomId).emit('chat message', msg)
 
             }
@@ -59,8 +89,8 @@ module.exports = function chatSocket(io) {
                 delete users[socket.id];
             }
         })
-
     })
+
     setInterval(function () {
         const roomUsers = {}
         for (const { roomId, username } of Object.values(users)) {

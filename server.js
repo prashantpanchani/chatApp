@@ -10,6 +10,7 @@ const dbConnect = require('./config/db');
 const app = express()
 const httpserver = createServer(app)
 const io = new Server(httpserver, {
+    maxHttpBufferSize: 1e7,
     cors: {
         origin: "*"
     }

@@ -3,21 +3,21 @@ const { default: mongoose } = require("mongoose");
 const messageSchema = new mongoose.Schema({
     messageText: {
         type: String,
-        require: true,
     },
     timestamp: {
         type: String,
-        require: true,
+        required: true,
     },
     username: {
         type: String,
-        require: true,
+        required: true,
     },
-    roomId: String
+    roomId: String,
     // {
     //     type: mongoose.Schema.Types.ObjectId,
     //     ref: 'Room'
     // }
+    media_id: { type: mongoose.Schema.Types.ObjectId, ref: 'Media' }
 
 })
 const Message = mongoose.model('Message', messageSchema)
