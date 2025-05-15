@@ -65,7 +65,6 @@ fileUploadButton.addEventListener('click', () => {
         }
         const input = document.querySelector(".message-input");
         if (input.value) {
-            console.log(input.value)
             socket.emit("media upload", {
                 messageText: input.value,
                 timestamp,
@@ -82,22 +81,6 @@ fileUploadButton.addEventListener('click', () => {
                 fileUrl,
             });
         }
-
-        // const messageArea = document.querySelector('.message-area')
-        // const outerDiv = document.createElement("div")
-        // outerDiv.style.margin = "1%";
-        // outerDiv.style.padding = "2%";
-        // outerDiv.style.backgroundColor = "#bab5b5";
-        // outerDiv.style.borderRadius = "0.7em";
-        // if (fileUrl.includes('video')) {
-        //     outerDiv.innerHTML = `<video width="70%" height="80%" controls>
-        //                                      <source src=${fileUrl} type="video/mp4">
-        //                                  </video>`
-        // }
-        // if (fileUrl.includes('image')) {
-        //     outerDiv.innerHTML = `<img src=${fileUrl} width="50%" height="50%">`
-        // }
-        // messageArea.append(outerDiv)
     })
 })
 socket.emit('initiateChat', user)
@@ -116,42 +99,10 @@ socket.on('previousMessage', (messages) => {
     if (messages) {
         messages.forEach(msg => {
             if (msg.messageText && !msg.media_id) {
-                showMessages(msg)
+                showMessages(msg, msg)
             }
             if (msg.media_id) {
-                showingMediaMessage(msg.media_id.url, msg)
-                // const messageArea = document.querySelector('.message-area')
-                // const outerDiv = document.createElement("div")
-                // const firstDiv = document.createElement('div')
-                // const secondDiv = document.createElement('div')
-                // const messagePar = document.createElement("p");
-                // messagePar.style.margin = "auto"
-                // messagePar.style.paddingBottom = "5px"
-                // outerDiv.style.margin = "1%";
-                // outerDiv.style.padding = "2%";
-                // outerDiv.style.backgroundColor = "#bab5b5";
-                // outerDiv.style.borderRadius = "0.7em";
-                // const fileUrl = msg.media_id.url
-                // if (fileUrl.includes('video')) {
-                //     firstDiv.innerHTML = `<video width="70%" height="80%" controls>
-                //                              <source src=${fileUrl} type="video/mp4">
-                //                          </video>`
-                //     outerDiv.append(firstDiv)
-                // }
-                // if (fileUrl.includes('image')) {
-                //     firstDiv.innerHTML = `<img src=${fileUrl} width="50%" height="50%">`
-                //     outerDiv.append(firstDiv)
-                // }
-                // if (msg.messageText) {
-                //     messagePar.innerText = msg.username + " : " + msg.messageText;
-                //     secondDiv.append(messagePar)
-                // }
-                // const timeSpan = document.createElement("span");
-                // timeSpan.innerText = msg.timestamp;
-                // secondDiv.appendChild(timeSpan)
-                // outerDiv.appendChild(firstDiv)
-                // outerDiv.appendChild(secondDiv)
-                // messageArea.append(outerDiv)
+                showingMediaMessage(msg.media_id.url, msg, msg)
             }
         })
         messageArea.scrollTop = messageArea.scrollHeight;
@@ -162,6 +113,7 @@ const messageForm = document.querySelector("#messageForm")
 messageForm.addEventListener("submit", (e) => {
     e.preventDefault()
     const input = document.querySelector(".message-input");
+    const fileElement = document.querySelector('#fileElement')
     if (!input.value) {
         alert('please Enter Message')
         return
@@ -181,44 +133,12 @@ messageForm.addEventListener("submit", (e) => {
     }
 });
 //showing user messages
-socket.on("chat message", (msg) => {
+socket.on("chat message", ({ msg, message }) => {
+    console.log("db is", message)
     if (!msg.fileUrl) {
-        showMessages(msg)
+        showMessages(msg, message)
     } else if (msg.fileUrl) {
-        showingMediaMessage(msg.fileUrl, msg)
-        // const messageArea = document.querySelector('.message-area')
-        // const outerDiv = document.createElement("div")
-        // const firstDiv = document.createElement('div')
-        // const secondDiv = document.createElement('div')
-        // const messagePar = document.createElement("p");
-        // messagePar.style.margin = "auto"
-        // messagePar.style.paddingBottom = "5px"
-        // outerDiv.style.margin = "1%";
-        // outerDiv.style.padding = "2%";
-        // outerDiv.style.backgroundColor = "#bab5b5";
-        // outerDiv.style.borderRadius = "0.7em";
-        // const fileUrl = msg.fileUrl
-        // if (fileUrl.includes('video')) {
-        //     firstDiv.innerHTML = `<video width="70%" height="80%" controls>
-        //                                      <source src=${fileUrl} type="video/mp4">
-        //                                  </video>`
-        //     outerDiv.append(firstDiv)
-        // }
-        // if (fileUrl.includes('image')) {
-        //     firstDiv.innerHTML = `<img src=${fileUrl} width="50%" height="50%">`
-        //     outerDiv.append(firstDiv)
-        // }
-        // if (msg.messageText) {
-
-        //     messagePar.innerText = msg.username + " : " + msg.messageText;
-        //     secondDiv.appendChild(messagePar)
-        // }
-        // const timeSpan = document.createElement("span");
-        // timeSpan.innerText = msg.timestamp;
-        // secondDiv.appendChild(timeSpan)
-        // outerDiv.appendChild(firstDiv)
-        // outerDiv.appendChild(secondDiv)
-        // messageArea.appendChild(outerDiv)
+        showingMediaMessage(msg.fileUrl, msg, message)
     }
 });
 
@@ -241,11 +161,11 @@ socket.on('user_typing_status', (data) => {
 })
 
 let ul = document.querySelector('.sidebar-ul')
-ul.style.marginTop = "1%"
-ul.style.listStyleType = 'none'
 
 function onlineUser(data) {
-    ul.innerHTML = ""
+    if (ul) {
+        ul.innerHTML = ""
+    }
     const userList = data.userList
     if (userList) {
         userList.forEach(element => {
@@ -270,9 +190,10 @@ socket.on("new_user_connected", (data) => {
     outerDiv.style.borderRadius = "0.7em";
 
     messagePar.innerText = `${data.username} Joined chat`
+    messagePar.style.height = "10%"
     outerDiv.append(messagePar)
     messageArea.append(outerDiv)
-    setTimeout(() => { outerDiv.remove() }, 3000)
+    setTimeout(() => { outerDiv.remove() }, 10000)
 
 
     onlineUser(data)
@@ -311,7 +232,7 @@ socket.on("user_disconnected", (data) => {
     messagePar.innerText = `${data.username} Left chat`
     outerDiv.append(messagePar)
     messageArea.append(outerDiv)
-    setTimeout(() => { outerDiv.remove() }, 3000)
+    setTimeout(() => { outerDiv.remove() }, 1000)
     onlineUser(data)
     Toastify({
         text: `${data.username} Left`,
@@ -329,12 +250,12 @@ socket.on("user_disconnected", (data) => {
     }).showToast();
 });
 
-function showMessages(msg) {
+function showMessages(msg, message) {
     const messageArea = document.querySelector(".message-area");
     const outerDiv = document.createElement("div");
+    const secondOuterDiv = document.createElement('div')
     const messagePar = document.createElement("p");
     const timeSpan = document.createElement("span");
-
     outerDiv.className += " outerDivMessageArea"
     messagePar.className += " messageParMessageArea"
     messagePar.innerText = msg.username + " : " + msg.messageText;
@@ -342,16 +263,30 @@ function showMessages(msg) {
 
     outerDiv.appendChild(messagePar);
     outerDiv.appendChild(timeSpan);
+    if (msg.username === username) {
+        const deleteButton = document.createElement('button')
+        deleteButton.classList += " deleteButton"
+        deleteButton.innerText = 'Delete'
+        secondOuterDiv.append(deleteButton)
+        //deleting message
+        deleteButton.addEventListener('click', () => {
+            socket.emit('delete message', message)
+            outerDiv.remove()
+        })
+    }
+    outerDiv.appendChild(secondOuterDiv)
     messageArea.appendChild(outerDiv);
     messageArea.scrollTop = messageArea.scrollHeight;
 }
 
-function showingMediaMessage(url, msg) {
+function showingMediaMessage(url, msg, message) {
+
     const messageArea = document.querySelector('.message-area')
     const outerDiv = document.createElement("div")
     const firstDiv = document.createElement('div')
     const secondDiv = document.createElement('div')
     const messagePar = document.createElement("p");
+
     messagePar.style.margin = "auto"
     messagePar.style.paddingBottom = "5px"
     outerDiv.style.margin = "1%";
@@ -379,5 +314,17 @@ function showingMediaMessage(url, msg) {
     secondDiv.appendChild(timeSpan)
     outerDiv.appendChild(firstDiv)
     outerDiv.appendChild(secondDiv)
+    if (msg.username === username) {
+        // console.log('showing media message', message)
+        const deleteButton = document.createElement('button')
+        deleteButton.classList += " deleteButton"
+        deleteButton.innerText = 'Delete'
+        secondDiv.append(deleteButton)
+
+        deleteButton.addEventListener('click', () => {
+            socket.emit('delete message', message)
+            outerDiv.remove()
+        })
+    }
     messageArea.appendChild(outerDiv)
 }

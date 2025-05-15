@@ -141,7 +141,7 @@ h2 {
   border-radius: 0.5rem;
   margin-left: 1em;
   height: 2.5em;
-  width: 80%;
+  width: fit-content;
   cursor: pointer;
 }
 .fileUploadButton {
@@ -154,8 +154,29 @@ h2 {
 }
 
 .send-button:active {
-  opacity: 0.3;
+  opacity: 0.4;
 }
 .send-button:hover {
   opacity: 0.8;
+}
+
+.deleteButton:hover {
+  opacity: 0.8;
+}
+.deleteButton:active {
+  opacity: 0.4;
+}
+.indicator-p {
+  margin: 1px;
+}
+.deleteButton {
+  padding: 0.5em 1em;
+  background-color: black;
+  color: white;
+  border: 1px solid black;
+  border-radius: 0.5rem;
+  margin-left: 7em;
+  height: 2em;
+  width: fit-content;
+  cursor: pointer;
 }
