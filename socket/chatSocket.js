@@ -1,6 +1,7 @@
 const { default: mongoose } = require("mongoose");
 const Media = require("../models/media");
 const Message = require("../models/message");
+const { ObjectId } = require("mongodb")
 
 module.exports = function chatSocket(io) {
     const users = {};
@@ -57,6 +58,7 @@ module.exports = function chatSocket(io) {
         })
         socket.on('media upload', async (msg) => {
             try {
+                console.log(msg)
                 const user = users[socket.id]
                 if (user) {
                     let url = msg.fileUrl
@@ -66,7 +68,6 @@ module.exports = function chatSocket(io) {
                         media_type: (url.includes('video') ? 'video' : 'image')
                     })
                     const messagePayload = {
-                        messageText: msg.messageText,
                         timestamp: msg.timestamp,
                         username: msg.username,
                         roomId: roomId,
@@ -75,7 +76,7 @@ module.exports = function chatSocket(io) {
                     if (msg.messageText) {
                         messagePayload.messageText = msg.messageText
                     }
-                    const message = await Message.create(messagePayload)
+                    const message = await (await Message.create(messagePayload)).populate('media_id')
                     io.to(user.roomId).emit('chat message', { msg, message })
                 }
                 // io.to(user.roomId).emit('chat message', msg)
@@ -86,15 +87,12 @@ module.exports = function chatSocket(io) {
 
         socket.on('delete message', async (message) => {
             try {
-
-
                 if (message.media_id) {
-                    const mediaId = mongoose.Types.ObjectId.createFromHexString(message.media_id._id)
-                    const deletedMedia = await Media.findByIdAndDelete(mediaId)
+                    const deletedMedia = await Media.findOneAndDelete({ _id: message.media_id._id })
                 }
                 const deletedMessage = await Message.findByIdAndDelete(message._id)
             } catch (error) {
-                console.log('error while deleting chat message', error.message)
+                console.log('error while deleting message', error)
             }
         })
 

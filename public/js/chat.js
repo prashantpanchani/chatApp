@@ -43,44 +43,27 @@ fileUploadButton.addEventListener('click', () => {
                 })
                 const data = await response.json()
                 const input = document.querySelector(".message-input");
+                const messagePayload = {
+                    timestamp, username, fileUrl: data.url
+                }
                 if (input.value) {
-                    socket.emit("media upload", {
-                        messageText: input.value,
-                        timestamp,
-                        username,
-                        fileUrl: data.url,
-                    });
-                    input.value = "";
-                    return
+                    messagePayload.messageText = input.value
                 }
-                if (!input.value) {
-                    socket.emit("media upload", {
-                        timestamp,
-                        username,
-                        fileUrl: data.url,
-                    });
-                }
+                socket.emit('media upload', { ...messagePayload })
             }
             uploadVideo(VideoUrl)
         }
         const input = document.querySelector(".message-input");
-        if (input.value) {
-            socket.emit("media upload", {
-                messageText: input.value,
-                timestamp,
-                username,
-                fileUrl,
-            });
-            input.value = "";
-            return
+        if (fileUrl.includes('image')) {
+            const messagePayload = {
+                timestamp, username, fileUrl
+            }
+            if (input.value) {
+                messagePayload.messageText = input.value
+            }
+            socket.emit('media upload', { ...messagePayload })
         }
-        if (!input.value && fileUrl && !fileUrl.includes('video')) {
-            socket.emit("media upload", {
-                timestamp,
-                username,
-                fileUrl,
-            });
-        }
+
     })
 })
 socket.emit('initiateChat', user)
