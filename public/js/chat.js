@@ -1,3 +1,4 @@
+import { createPopup } from 'https://cdn.skypack.dev/@picmo/popup-picker';
 const socket = io();
 const username = localStorage.getItem("username");
 const roomId = localStorage.getItem('roomId')
@@ -117,7 +118,6 @@ messageForm.addEventListener("submit", (e) => {
 });
 //showing user messages
 socket.on("chat message", ({ msg, message }) => {
-    console.log("db is", message)
     if (!msg.fileUrl) {
         showMessages(msg, message)
     } else if (msg.fileUrl) {
@@ -233,6 +233,7 @@ socket.on("user_disconnected", (data) => {
     }).showToast();
 });
 
+//showing text messages
 function showMessages(msg, message) {
     const messageArea = document.querySelector(".message-area");
     const outerDiv = document.createElement("div");
@@ -262,6 +263,7 @@ function showMessages(msg, message) {
     messageArea.scrollTop = messageArea.scrollHeight;
 }
 
+//showing messages with photo or video
 function showingMediaMessage(url, msg, message) {
 
     const messageArea = document.querySelector('.message-area')
@@ -278,18 +280,18 @@ function showingMediaMessage(url, msg, message) {
     outerDiv.style.borderRadius = "0.7em";
     const fileUrl = msg.fileUrl
     if (url.includes('video')) {
-        firstDiv.innerHTML = `<video width="70%" height="80%" controls>
+        firstDiv.innerHTML = `<p>${msg.username} :</p><video width="70%" height="80%" controls>
                                          <source src=${url} type="video/mp4">
                                      </video>`
         outerDiv.append(firstDiv)
     }
     if (url.includes('image')) {
-        firstDiv.innerHTML = `<img src=${url} width="50%" height="50%">`
+        firstDiv.innerHTML = `<p>${msg.username} :</p><img src=${url} width="50%" height="50%">`
         outerDiv.append(firstDiv)
     }
     if (msg.messageText) {
 
-        messagePar.innerText = msg.username + " : " + msg.messageText;
+        messagePar.innerText = msg.messageText;
         secondDiv.appendChild(messagePar)
     }
     const timeSpan = document.createElement("span");
@@ -298,7 +300,6 @@ function showingMediaMessage(url, msg, message) {
     outerDiv.appendChild(firstDiv)
     outerDiv.appendChild(secondDiv)
     if (msg.username === username) {
-        // console.log('showing media message', message)
         const deleteButton = document.createElement('button')
         deleteButton.classList += " deleteButton"
         deleteButton.innerText = 'Delete'
@@ -310,4 +311,26 @@ function showingMediaMessage(url, msg, message) {
         })
     }
     messageArea.appendChild(outerDiv)
+}
+
+//emoji picker
+emojiPicker(createPopup)
+function emojiPicker(createPopup) {
+    const selectionEmoji = document.querySelector("#selection-emoji")
+    const inputMessage = document.querySelector('.message-input')
+    const picker = createPopup(
+        {},
+        {
+            referenceElement: selectionEmoji,
+            triggerElement: selectionEmoji,
+            position: "bottom-start",
+            showCloseButton: true
+        }
+    );
+    selectionEmoji.addEventListener('click', () => {
+        picker.toggle();
+    })
+    picker.addEventListener('emoji:select', (selection) => {
+        inputMessage.value += selection.emoji
+    })
 }

@@ -1,7 +1,6 @@
 const { default: mongoose } = require("mongoose");
 const Media = require("../models/media");
 const Message = require("../models/message");
-const { ObjectId } = require("mongodb")
 
 module.exports = function chatSocket(io) {
     const users = {};
@@ -53,12 +52,11 @@ module.exports = function chatSocket(io) {
                     }
                 }
             } catch (error) {
-                console.log('error creating chat message in database', error.message)
+                console.log('error creating chat message in database', error)
             }
         })
         socket.on('media upload', async (msg) => {
             try {
-                console.log(msg)
                 const user = users[socket.id]
                 if (user) {
                     let url = msg.fileUrl
