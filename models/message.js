@@ -13,10 +13,6 @@ const messageSchema = new mongoose.Schema({
         required: true,
     },
     roomId: String,
-    // {
-    //     type: mongoose.Schema.Types.ObjectId,
-    //     ref: 'Room'
-    // }
     media_id: { type: mongoose.Schema.Types.ObjectId, ref: 'Media' }
 
 })

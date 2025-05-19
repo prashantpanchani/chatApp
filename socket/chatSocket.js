@@ -32,13 +32,10 @@ module.exports = function chatSocket(io) {
             } catch (error) {
                 console.log('error getting chat message from database', error.message)
             }
-
         })
 
         socket.on('chat message', async (msg) => {
             try {
-
-
                 const user = users[socket.id]
                 if (user) {
                     if (!msg.fileUrl) {
@@ -48,7 +45,8 @@ module.exports = function chatSocket(io) {
                             username: msg.username,
                             roomId: user.roomId
                         })
-                        io.to(user.roomId).emit('chat message', { msg, message })
+                        io.to(user.roomId).emit('chat message', { msg, message }, () => {
+                        })
                     }
                 }
             } catch (error) {

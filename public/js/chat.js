@@ -4,7 +4,7 @@ const username = localStorage.getItem("username");
 const roomId = localStorage.getItem('roomId')
 const user = { username, roomId }
 
-//to convert files(image video to )
+//to convert files(image video to base64 string of asci char)
 const toBase64 = file => new Promise((resolve, reject) => {
     const reader = new FileReader();
     reader.readAsDataURL(file);
@@ -154,7 +154,8 @@ function onlineUser(data) {
         userList.forEach(element => {
             if (element !== username) {
                 let li = document.createElement('li')
-                li.innerHTML = `${element}`
+                li.classList += ' onlineUserList'
+                li.innerHTML = `${element} <span class="dot"></span>`
                 ul.append(li)
             }
         });
@@ -284,13 +285,16 @@ function showingMediaMessage(url, msg, message) {
                                          <source src=${url} type="video/mp4">
                                      </video>`
         outerDiv.append(firstDiv)
+        messageArea.scrollTop = messageArea.scrollHeight;
+
     }
     if (url.includes('image')) {
         firstDiv.innerHTML = `<p>${msg.username} :</p><img src=${url} width="50%" height="50%">`
         outerDiv.append(firstDiv)
+        messageArea.scrollTop = messageArea.scrollHeight;
+
     }
     if (msg.messageText) {
-
         messagePar.innerText = msg.messageText;
         secondDiv.appendChild(messagePar)
     }
@@ -299,6 +303,7 @@ function showingMediaMessage(url, msg, message) {
     secondDiv.appendChild(timeSpan)
     outerDiv.appendChild(firstDiv)
     outerDiv.appendChild(secondDiv)
+    //showing delete button for same username
     if (msg.username === username) {
         const deleteButton = document.createElement('button')
         deleteButton.classList += " deleteButton"
@@ -311,6 +316,7 @@ function showingMediaMessage(url, msg, message) {
         })
     }
     messageArea.appendChild(outerDiv)
+    messageArea.scrollTop = messageArea.scrollHeight;
 }
 
 //emoji picker
@@ -318,13 +324,15 @@ emojiPicker(createPopup)
 function emojiPicker(createPopup) {
     const selectionEmoji = document.querySelector("#selection-emoji")
     const inputMessage = document.querySelector('.message-input')
-    const picker = createPopup(
-        {},
+    const picker = createPopup({
+        emojiSize: '28px',
+        hideOnEmojiSelect: false
+    },
         {
             referenceElement: selectionEmoji,
             triggerElement: selectionEmoji,
             position: "bottom-start",
-            showCloseButton: true
+            showCloseButton: true,
         }
     );
     selectionEmoji.addEventListener('click', () => {
@@ -334,3 +342,19 @@ function emojiPicker(createPopup) {
         inputMessage.value += selection.emoji
     })
 }
+
+//theme toggle
+document.addEventListener("DOMContentLoaded", () => {
+    const html = document.querySelector('.html')
+    const savedTheme = localStorage.getItem("theme") || "light";
+    html.setAttribute("data-theme", savedTheme);
+});
+
+const themeButton = document.querySelector(".themeButton");
+themeButton.addEventListener("click", () => {
+    const html = document.querySelector(".html");
+    let currentTheme = html.getAttribute("data-theme") || 'light';
+    const newTheme = currentTheme === "light" ? "dark" : "light";
+    html.setAttribute("data-theme", newTheme);
+    localStorage.setItem("theme", newTheme);
+});

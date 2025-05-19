@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="light" class="html">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -19,6 +19,9 @@
       <input type="text" placeholder="Enter Room Id" class="userRoomId" />
       <button class="join-btn">Join Chat</button>
     </div>
+    <div>
+      <button class="themeButton">Theme</button>
+    </div>
     <script>
       const joinBtn = document.querySelector(".join-btn");
       const usernameInput = document.querySelector(".username-input");
@@ -33,6 +36,21 @@
         } else {
           alert("Please Enter Valid Details");
         }
+      });
+
+      document.addEventListener("DOMContentLoaded", () => {
+        const html = document.querySelector(".html");
+        const savedTheme = localStorage.getItem("theme") || "light";
+        html.setAttribute("data-theme", savedTheme);
+      });
+
+      const themeButton = document.querySelector(".themeButton");
+      themeButton.addEventListener("click", () => {
+        const html = document.querySelector(".html");
+        let currentTheme = html.getAttribute("data-theme") || "light";
+        const newTheme = currentTheme === "light" ? "dark" : "light";
+        html.setAttribute("data-theme", newTheme);
+        localStorage.setItem("theme", newTheme);
       });
     </script>
   </body>

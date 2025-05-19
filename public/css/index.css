@@ -1,66 +1,84 @@
 /* Center the body content */
 body {
-    display: flex;
-    justify-content: center;
-    margin: 0;
-    font-family: Arial, sans-serif;
-  }
-  
-  /* Container styling */
-  .chat-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-direction: column;
-    border: 2px solid grey;
-    height: max-content;
-    width: 70%;
-    border-radius: 12px;
-    margin-top: 2%;
-    padding: 2%;
-  }
-  
-  /* Header styling */
-  .chat-container h2 {
-    margin-bottom: 0%;
-  }
-  
-  /* Input box styling */
-  .username-input {
-    width: 50%;
-    height: 30px;
-    border-radius: 5px;
-    border: 1px solid grey;
-    margin-top: 2%;
-    padding-left: 10px;
-  }
-  .userRoomId {
-    width: 50%;
-    height: 30px;
-    border-radius: 5px;
-    border: 1px solid grey;
-    margin-top: 2%;
-    padding-left: 10px;
-  }
-  
-  /* Button styling */
-  .join-btn {
-    width: 25%;
-    height: 30px;
-    border-radius: 7px;
-    border: 1px solid grey;
-    margin-top: 2%;
-    background-color: black;
-    color: white;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-  }
-  
-  .join-btn:hover {
-    background-color: black;
-    opacity: 0.8;
-    color: white;
-  }
+  display: flex;
+  justify-content: center;
+  margin: 0;
+  font-family: Arial, sans-serif;
+}
+h2 {
+  color: var(--bg);
+}
+/* Container styling */
+.chat-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  border: 2px solid grey;
+  height: max-content;
+  width: 70%;
+  border-radius: 12px;
+  margin-top: 2%;
+  padding: 2%;
+}
 
-  
-  
+/* Header styling */
+.chat-container h2 {
+  margin-bottom: 0%;
+}
+
+/* Input box styling */
+.username-input {
+  width: 50%;
+  height: 30px;
+  border-radius: 5px;
+  border: 1px solid var(--bg);
+  margin-top: 2%;
+  padding-left: 10px;
+}
+.userRoomId {
+  width: 50%;
+  height: 30px;
+  border-radius: 5px;
+  border: 1px solid var(--bg);
+  margin-top: 2%;
+  padding-left: 10px;
+}
+
+/* Button styling */
+.join-btn {
+  width: 25%;
+  height: 30px;
+  border-radius: 7px;
+  border: 1px solid var(--bg);
+  margin-top: 2%;
+  background-color: var(--color-fg);
+  color: var(--color-bg);
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.join-btn:hover {
+  background-color: black;
+  opacity: 0.8;
+  color: white;
+}
+
+[data-theme="light"] {
+  --color-bg: #ffffff;
+  --color-fg: #000000;
+  --bg: #000000;
+}
+
+[data-theme="dark"] {
+  --color-bg: #000000;
+  --color-fg: #ffffff;
+  --bg: #ffffff;
+}
+
+/* example use of CSS custom properties */
+body {
+  background-color: var(--color-bg);
+  color: var(--bg);
+  border: var(--color-fg);
+}

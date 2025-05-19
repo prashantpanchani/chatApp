@@ -15,7 +15,7 @@ body {
 h2 {
   background-color: #bab5b5;
   color: white;
-  border: 1px solid #bab5b5;
+  border: 1px solid var(--color-fg);
   border-radius: 0.5em;
   padding: 1%;
   margin-top: 1em;
@@ -48,7 +48,7 @@ p {
 .message-area {
   background-color: whitesmoke;
   width: 70%;
-  border: 1px solid black;
+  border: 1px solid var(--color-fg);
   border-radius: 0.5rem;
   height: 100%;
   /* text-align: right; */
@@ -73,7 +73,7 @@ p {
 /* Sidebar */
 .sidebar {
   width: 20%;
-  /* border: 1px solid black; */
+  /* border: 1px solid var(--color-fg); */
   border-radius: 0.5rem;
   height: 100%;
   display: flex;
@@ -91,7 +91,7 @@ p {
   align-items: center;
   margin: 1px;
   border-radius: 6px;
-  border: 1px solid black;
+  border: 1px solid var(--color-fg);
   width: 98%;
 }
 
@@ -115,7 +115,17 @@ p {
 }
 
 .sidebar-ul li {
-  padding: 1px;
+  padding: 0px;
+  white-space: nowrap;
+}
+.dot {
+  height: 7px;
+  width: 7px;
+  background-color: #0dcf1d;
+  border-radius: 50%;
+  margin-bottom: 2px;
+  margin-left: 1px;
+  display: inline-block;
 }
 /* Message input row */
 .input-row {
@@ -132,7 +142,7 @@ p {
 /* Message input */
 .message-input {
   width: 95%;
-  border: 1px solid black;
+  border: 1px solid var(--color-fg);
   border-radius: 0.5rem;
   height: 2.5em;
   padding-left: 10px;
@@ -142,9 +152,9 @@ p {
 /* Send button */
 .send-button {
   padding: 0.5em 1em;
-  background-color: black;
-  color: white;
-  border: 1px solid black;
+  background-color: var(--color-fg);
+  color: var(--color-bg);
+  border: 1px solid var(--color-fg);
   border-radius: 0.5rem;
   margin-left: 1em;
   height: 3em;
@@ -153,12 +163,15 @@ p {
 }
 .fileUploadButton {
   padding: 0.5em 1em;
-  background-color: black;
-  color: white;
-  border: 1px solid black;
+  background-color: var(--color-fg);
+  color: var(--color-bg);
+  border: 1px solid var(--color-fg);
   border-radius: 0.5rem;
   cursor: pointer;
   white-space: nowrap;
+}
+.fileUploadButton:hover {
+  opacity: 0.8;
 }
 
 .send-button:active {
@@ -179,9 +192,10 @@ p {
 }
 .deleteButton {
   padding: 0.5em 1em;
-  background-color: black;
-  color: white;
-  border: 1px solid black;
+  background-color: var(--color-fg);
+  /* background-color: var(--color-bg);x */
+  color: var(--color-bg);
+  border: 1px solid var(--color-fg);
   border-radius: 0.5rem;
   margin-left: 7em;
   height: 2em;
@@ -196,10 +210,15 @@ p {
   top: 2%;
   bottom: auto;
 }
+#fileElement {
+  color: var(--color-fg);
+}
+
 .emoji-div {
 }
 label {
   white-space: nowrap;
+  color: var(--color-fg);
 }
 
 @media (max-width: 600px) {
@@ -231,4 +250,28 @@ label {
   .sidebar {
     width: 25%;
   }
+}
+
+:root {
+  --grid-unit: 1rem;
+  --border-radius-base: 0.5rem;
+}
+
+[data-theme="light"] {
+  --color-bg: #ffffff;
+  --color-fg: #000000;
+  --bg: #000000;
+}
+
+[data-theme="dark"] {
+  --color-bg: #000000;
+  --color-fg: #ffffff;
+  --bg: #000000;
+}
+
+/* example use of CSS custom properties */
+body {
+  background-color: var(--color-bg);
+  color: var(--bg);
+  border: var(--color-fg);
 }
