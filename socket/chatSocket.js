@@ -34,7 +34,7 @@ module.exports = function chatSocket(io) {
             }
         })
 
-        socket.on('chat message', async (msg) => {
+        socket.on('chat message', async (msg, cb) => {
             try {
                 const user = users[socket.id]
                 if (user) {
@@ -43,17 +43,19 @@ module.exports = function chatSocket(io) {
                             messageText: msg.messageText,
                             timestamp: msg.timestamp,
                             username: msg.username,
-                            roomId: user.roomId
+                            roomId: user.roomId,
+                            status: 'sent'
                         })
-                        io.to(user.roomId).emit('chat message', { msg, message }, () => {
-                        })
+                        socket.emit('chat message', { msg, message });
+                        socket.broadcast.to(user.roomId).emit('chat message_all', { msg, message })
+                        cb({ ack: 'ok', messageId: message._id })
                     }
                 }
             } catch (error) {
                 console.log('error creating chat message in database', error)
             }
         })
-        socket.on('media upload', async (msg) => {
+        socket.on('media upload', async (msg, cb) => {
             try {
                 const user = users[socket.id]
                 if (user) {
@@ -67,18 +69,24 @@ module.exports = function chatSocket(io) {
                         timestamp: msg.timestamp,
                         username: msg.username,
                         roomId: roomId,
-                        media_id: MediaMessage._id
+                        media_id: MediaMessage._id,
+                        status: 'sent'
                     }
                     if (msg.messageText) {
                         messagePayload.messageText = msg.messageText
                     }
                     const message = await (await Message.create(messagePayload)).populate('media_id')
                     io.to(user.roomId).emit('chat message', { msg, message })
+                    cb({ status: "ok", messageId: message._id })
                 }
                 // io.to(user.roomId).emit('chat message', msg)
             } catch (error) {
                 console.log('error while creating media message', error.message)
             }
+        })
+        socket.on('message_delivered', async ({ messageId }) => {
+            console.log('message deli', messageId)
+            await Message.findByIdAndUpdate(messageId, { status: 'delivered' })
         })
 
         socket.on('delete message', async (message) => {

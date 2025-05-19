@@ -50,7 +50,11 @@ fileUploadButton.addEventListener('click', () => {
                 if (input.value) {
                     messagePayload.messageText = input.value
                 }
-                socket.emit('media upload', { ...messagePayload })
+                socket.emit('media upload', { ...messagePayload }, (ack) => {
+                    if (ack.status === 'ok') {
+                        console.log(ack.messageId)
+                    }
+                })
             }
             uploadVideo(VideoUrl)
         }
@@ -62,11 +66,19 @@ fileUploadButton.addEventListener('click', () => {
             if (input.value) {
                 messagePayload.messageText = input.value
             }
-            socket.emit('media upload', { ...messagePayload })
+            socket.emit('media upload', { ...messagePayload }, (ack) => {
+                if (ack.status === "ok") {
+                    console.log(ack.messageId)
+                }
+            })
         }
 
     })
 })
+function updateMessageStatus() {
+
+}
+
 socket.emit('initiateChat', user)
 
 //showing username
@@ -82,6 +94,11 @@ socket.on('previousMessage', (messages) => {
     const messageArea = document.querySelector(".message-area");
     if (messages) {
         messages.forEach(msg => {
+            if (msg.status !== "delivered" && msg.username !== username) {
+                console.log(msg)
+                socket.emit('message_delivered', { messageId: msg._id })
+                msg.status === 'delivered'
+            }
             if (msg.messageText && !msg.media_id) {
                 showMessages(msg, msg)
             }
@@ -92,7 +109,6 @@ socket.on('previousMessage', (messages) => {
         messageArea.scrollTop = messageArea.scrollHeight;
     }
 })
-
 const messageForm = document.querySelector("#messageForm")
 messageForm.addEventListener("submit", (e) => {
     e.preventDefault()
@@ -112,16 +128,32 @@ messageForm.addEventListener("submit", (e) => {
             messageText: input.value,
             timestamp,
             username,
+        }, (ack) => {
+            if (ack.status === 'ok') {
+                console.log(ack.messageId)
+            }
         });
         input.value = "";
     }
 });
-//showing user messages
+
 socket.on("chat message", ({ msg, message }) => {
     if (!msg.fileUrl) {
         showMessages(msg, message)
     } else if (msg.fileUrl) {
         showingMediaMessage(msg.fileUrl, msg, message)
+    }
+});
+//showing user messages to others
+socket.on("chat message_all", ({ msg, message }) => {
+    console.log('chat message all')
+    if (!msg.fileUrl) {
+        showMessages(msg, message)
+        socket.emit('message_delivered', { messageId: message._id })
+    } else if (msg.fileUrl) {
+        showingMediaMessage(msg.fileUrl, msg, message)
+        socket.emit('message_delivered', { messageId: message._id })
+
     }
 });
 
@@ -248,11 +280,27 @@ function showMessages(msg, message) {
 
     outerDiv.appendChild(messagePar);
     outerDiv.appendChild(timeSpan);
+
+
     if (msg.username === username) {
         const deleteButton = document.createElement('button')
         deleteButton.classList += " deleteButton"
         deleteButton.innerText = 'Delete'
         secondOuterDiv.append(deleteButton)
+
+        const statusSpan = document.createElement('span');
+        statusSpan.className = "message-status";
+        if (message.status === 'sent') {
+            statusSpan.innerText = "✓"; // 'sent', 'delivered', or 'read'
+        }
+        if (message.status === 'delivered') {
+            statusSpan.innerText = "✓✓"; // 'sent', 'delivered', or 'read'
+        }
+        if (message.status === 'seen') {
+            statusSpan.innerText = "✅"; // 'sent', 'delivered', or 'read'
+        }
+        statusSpan.style.marginLeft = "35%"
+        secondOuterDiv.appendChild(statusSpan);
         //deleting message
         deleteButton.addEventListener('click', () => {
             socket.emit('delete message', message)
@@ -303,8 +351,26 @@ function showingMediaMessage(url, msg, message) {
     secondDiv.appendChild(timeSpan)
     outerDiv.appendChild(firstDiv)
     outerDiv.appendChild(secondDiv)
-    //showing delete button for same username
+
+
+
+    //showing delete button for same username and message delivery indicator
     if (msg.username === username) {
+        const statusSpan = document.createElement('span');
+        statusSpan.className = "message-status";
+        if (message.status === 'sent') {
+            statusSpan.innerText = "✓"; // 'sent'
+        }
+        if (message.status === 'delivered') {
+            statusSpan.innerText = "✓✓"; // 'delivered'
+        }
+        if (message.status === 'seen') {
+            statusSpan.innerText = "✅"; //'read'
+        }
+        statusSpan.style.marginLeft = "60%"
+        outerDiv.appendChild(statusSpan);
+
+
         const deleteButton = document.createElement('button')
         deleteButton.classList += " deleteButton"
         deleteButton.innerText = 'Delete'

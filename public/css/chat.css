@@ -214,8 +214,6 @@ p {
   color: var(--color-fg);
 }
 
-.emoji-div {
-}
 label {
   white-space: nowrap;
   color: var(--color-fg);
@@ -252,10 +250,10 @@ label {
   }
 }
 
-:root {
+/* :root {
   --grid-unit: 1rem;
   --border-radius-base: 0.5rem;
-}
+} */
 
 [data-theme="light"] {
   --color-bg: #ffffff;
