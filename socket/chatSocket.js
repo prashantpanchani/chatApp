@@ -6,7 +6,6 @@ module.exports = function chatSocket(io) {
     const users = {};
 
     io.on('connection', async (socket) => {
-        let room;
         socket.on('initiateChat', async (user) => {
             users[socket.id] = { username: user.username, roomId: user.roomId }
             socket.join(user.roomId)
@@ -15,8 +14,9 @@ module.exports = function chatSocket(io) {
             const userList = Object.values(users)
                 .filter(u => u.roomId === user.roomId)
                 .map(u => u.username);
-            socket.broadcast.to(user.roomId).emit('new_user_connected', { username: user.username, userList })
+            socket.broadcast.to(user.roomId).emit('new_user_connected', { username: user.username, userList }) //sending to all client in room except sender
         })
+
         socket.on('userJoin', async (user) => {
             try {
                 async function getMessage() {
@@ -28,13 +28,13 @@ module.exports = function chatSocket(io) {
                     }
                 }
                 const messages = await getMessage()
-                io.to(socket.id).emit('previousMessage', messages)
+                io.to(socket.id).emit('previousMessage', messages) //send event to client with specific socket id
             } catch (error) {
                 console.log('error getting chat message from database', error.message)
             }
         })
 
-        socket.on('chat message', async (msg, cb) => {
+        socket.on('chat message', async (msg) => {
             try {
                 const user = users[socket.id]
                 if (user) {
@@ -46,16 +46,16 @@ module.exports = function chatSocket(io) {
                             roomId: user.roomId,
                             status: 'sent'
                         })
-                        socket.emit('chat message', { msg, message });
-                        socket.broadcast.to(user.roomId).emit('chat message_all', { msg, message })
-                        cb({ ack: 'ok', messageId: message._id })
+                        socket.emit('chat message', { msg, message }); //sending to current socket only
+                        socket.broadcast.to(user.roomId).emit('chat message_all', { msg, message })//sending to all client in room except sender
                     }
                 }
             } catch (error) {
                 console.log('error creating chat message in database', error)
             }
         })
-        socket.on('media upload', async (msg, cb) => {
+
+        socket.on('media upload', async (msg) => {
             try {
                 const user = users[socket.id]
                 if (user) {
@@ -76,17 +76,32 @@ module.exports = function chatSocket(io) {
                         messagePayload.messageText = msg.messageText
                     }
                     const message = await (await Message.create(messagePayload)).populate('media_id')
-                    io.to(user.roomId).emit('chat message', { msg, message })
-                    cb({ status: "ok", messageId: message._id })
+                    socket.emit('chat message', { msg, message })
+                    socket.broadcast.to(user.roomId).emit('chat message_all', { msg, message })//send event to all client in room except sender
                 }
-                // io.to(user.roomId).emit('chat message', msg)
             } catch (error) {
                 console.log('error while creating media message', error.message)
             }
         })
-        socket.on('message_delivered', async ({ messageId }) => {
-            console.log('message deli', messageId)
-            await Message.findByIdAndUpdate(messageId, { status: 'delivered' })
+
+        socket.on('message_delivered', async ({ messageId, senderName }) => {
+            try {
+                await Message.findByIdAndUpdate(messageId, { status: 'delivered' })
+                const senderSocketId = Object.keys(users).find(id => users[id].username === senderName)
+                io.to(senderSocketId).emit('update message status', { messageId, status: 'delivered' })
+            } catch (error) {
+                console.error('error while message delivered', error)
+            }
+        })
+
+        socket.on('message_seen', async ({ messageId, senderName }) => {
+            try {
+                await Message.findByIdAndUpdate(messageId, { status: 'seen' })
+                const senderSocketId = Object.keys(users).find(id => users[id].username === senderName)
+                io.to(senderSocketId).emit('update message status', { messageId, status: 'seen' })
+            } catch (error) {
+                console.error('error while message seen ', error)
+            }
         })
 
         socket.on('delete message', async (message) => {
@@ -104,14 +119,14 @@ module.exports = function chatSocket(io) {
         socket.on('user input', (data) => {
             const user = users[socket.id]
             if (user) {
-                socket.broadcast.to(user.roomId).emit('user_typing_status', data)
+                socket.broadcast.to(user.roomId).emit('user_typing_status', data) //send event to all client in room except sender
             }
         })
 
         socket.on('disconnect', () => {
             const user = users[socket.id];
             if (user) {
-                socket.broadcast.to(user.roomId).emit('user_disconnected', { username: user.username });
+                socket.broadcast.to(user.roomId).emit('user_disconnected', { username: user.username }); //send event to all client in room except sender
                 delete users[socket.id];
             }
         })

@@ -1,4 +1,9 @@
 import { createPopup } from 'https://cdn.skypack.dev/@picmo/popup-picker';
+import { uploadVideo } from './uploadvideo.js';
+import { showMessages } from './showMessages.js';
+import { showingMediaMessage } from './showingMediaMessage.js';
+
+
 const socket = io();
 const username = localStorage.getItem("username");
 const roomId = localStorage.getItem('roomId')
@@ -27,58 +32,27 @@ fileUploadButton.addEventListener('click', () => {
         return
     }
     const file = fileElement.files[0]
+    fileElement.value = ''
     toBase64(file).then((fileUrl) => {
         let VideoUrl
         if (fileUrl.includes('video')) {
             VideoUrl = fileUrl
-            async function uploadVideo(VideoUrl) {
-                const response = await fetch('https://api.cloudinary.com/v1_1/dhrebwfsi/video/upload', {
-                    method: 'POST',
-                    body: JSON.stringify({
-                        file: VideoUrl,
-                        upload_preset: "ml_default"
-                    }),
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                })
-                const data = await response.json()
-                const input = document.querySelector(".message-input");
-                const messagePayload = {
-                    timestamp, username, fileUrl: data.url
-                }
-                if (input.value) {
-                    messagePayload.messageText = input.value
-                }
-                socket.emit('media upload', { ...messagePayload }, (ack) => {
-                    if (ack.status === 'ok') {
-                        console.log(ack.messageId)
-                    }
-                })
-            }
-            uploadVideo(VideoUrl)
+            uploadVideo(VideoUrl, timestamp, username, socket)
         }
         const input = document.querySelector(".message-input");
+
         if (fileUrl.includes('image')) {
             const messagePayload = {
                 timestamp, username, fileUrl
             }
             if (input.value) {
                 messagePayload.messageText = input.value
+                input.value = ''
             }
-            socket.emit('media upload', { ...messagePayload }, (ack) => {
-                if (ack.status === "ok") {
-                    console.log(ack.messageId)
-                }
-            })
+            socket.emit('media upload', { ...messagePayload })
         }
-
     })
 })
-function updateMessageStatus() {
-
-}
-
 socket.emit('initiateChat', user)
 
 //showing username
@@ -94,16 +68,15 @@ socket.on('previousMessage', (messages) => {
     const messageArea = document.querySelector(".message-area");
     if (messages) {
         messages.forEach(msg => {
-            if (msg.status !== "delivered" && msg.username !== username) {
-                console.log(msg)
-                socket.emit('message_delivered', { messageId: msg._id })
+            if (msg.status !== "delivered" && msg.status !== "seen" && msg.username !== username) {
+                socket.emit('message_delivered', { messageId: msg._id, senderName: msg.username })
                 msg.status === 'delivered'
             }
             if (msg.messageText && !msg.media_id) {
-                showMessages(msg, msg)
+                showMessages(msg, msg, socket, username)
             }
             if (msg.media_id) {
-                showingMediaMessage(msg.media_id.url, msg, msg)
+                showingMediaMessage(msg.media_id.url, msg, msg, socket, username)
             }
         })
         messageArea.scrollTop = messageArea.scrollHeight;
@@ -128,10 +101,6 @@ messageForm.addEventListener("submit", (e) => {
             messageText: input.value,
             timestamp,
             username,
-        }, (ack) => {
-            if (ack.status === 'ok') {
-                console.log(ack.messageId)
-            }
         });
         input.value = "";
     }
@@ -139,20 +108,23 @@ messageForm.addEventListener("submit", (e) => {
 
 socket.on("chat message", ({ msg, message }) => {
     if (!msg.fileUrl) {
-        showMessages(msg, message)
+        if (msg, message) {
+            showMessages(msg, message, socket, username)
+        }
     } else if (msg.fileUrl) {
-        showingMediaMessage(msg.fileUrl, msg, message)
+        showingMediaMessage(msg.fileUrl, msg, message, socket, username)
     }
 });
 //showing user messages to others
 socket.on("chat message_all", ({ msg, message }) => {
-    console.log('chat message all')
+    message.status = 'delivered'
+    socket.emit('message_delivered', { messageId: message._id, senderName: message.username })
     if (!msg.fileUrl) {
-        showMessages(msg, message)
-        socket.emit('message_delivered', { messageId: message._id })
+        showMessages(msg, message, socket, username)
+        // socket.emit('message_delivered', { messageId: message._id })
     } else if (msg.fileUrl) {
-        showingMediaMessage(msg.fileUrl, msg, message)
-        socket.emit('message_delivered', { messageId: message._id })
+        showingMediaMessage(msg.fileUrl, msg, message, socket, username)
+        // socket.emit('message_delivered', { messageId: message._id })
 
     }
 });
@@ -209,24 +181,24 @@ socket.on("new_user_connected", (data) => {
     messagePar.style.height = "10%"
     outerDiv.append(messagePar)
     messageArea.append(outerDiv)
-    setTimeout(() => { outerDiv.remove() }, 10000)
+    setTimeout(() => { outerDiv.remove() }, 1000)
 
 
     onlineUser(data)
-    Toastify({
-        text: `${data.username} Joined`,
-        duration: 5000,
-        destination: "https://github.com/apvarun/toastify-js",
-        newWindow: true,
-        close: true,
-        gravity: "top",
-        position: "right",
-        stopOnFocus: true,
-        style: {
-            background: "linear-gradient(to right, #00b09b, #96c93d)",
-        },
-        onClick: function () { } // Callback after click
-    }).showToast();
+    // Toastify({
+    //     text: `${data.username} Joined`,
+    //     duration: 5000,
+    //     destination: "https://github.com/apvarun/toastify-js",
+    //     newWindow: true,
+    //     close: true,
+    //     gravity: "top",
+    //     position: "right",
+    //     stopOnFocus: true,
+    //     style: {
+    //         background: "linear-gradient(to right, #00b09b, #96c93d)",
+    //     },
+    //     onClick: function () { } // Callback after click
+    // }).showToast();
 });
 
 //
@@ -250,141 +222,21 @@ socket.on("user_disconnected", (data) => {
     messageArea.append(outerDiv)
     setTimeout(() => { outerDiv.remove() }, 1000)
     onlineUser(data)
-    Toastify({
-        text: `${data.username} Left`,
-        duration: 3000,
-        destination: "https://github.com/apvarun/toastify-js",
-        newWindow: true,
-        close: true,
-        gravity: "top",
-        position: "right",
-        stopOnFocus: true,
-        style: {
-            background: "linear-gradient(to right, #00b09b, #96c93d)",
-        },
-        onClick: function () { } // Callback after click
-    }).showToast();
+    // Toastify({
+    //     text: `${data.username} Left`,
+    //     duration: 3000,
+    //     destination: "https://github.com/apvarun/toastify-js",
+    //     newWindow: true,
+    //     close: true,
+    //     gravity: "top",
+    //     position: "right",
+    //     stopOnFocus: true,
+    //     style: {
+    //         background: "linear-gradient(to right, #00b09b, #96c93d)",
+    //     },
+    //     onClick: function () { } // Callback after click
+    // }).showToast();
 });
-
-//showing text messages
-function showMessages(msg, message) {
-    const messageArea = document.querySelector(".message-area");
-    const outerDiv = document.createElement("div");
-    const secondOuterDiv = document.createElement('div')
-    const messagePar = document.createElement("p");
-    const timeSpan = document.createElement("span");
-    outerDiv.className += " outerDivMessageArea"
-    messagePar.className += " messageParMessageArea"
-    messagePar.innerText = msg.username + " : " + msg.messageText;
-    timeSpan.innerText = msg.timestamp;
-
-    outerDiv.appendChild(messagePar);
-    outerDiv.appendChild(timeSpan);
-
-
-    if (msg.username === username) {
-        const deleteButton = document.createElement('button')
-        deleteButton.classList += " deleteButton"
-        deleteButton.innerText = 'Delete'
-        secondOuterDiv.append(deleteButton)
-
-        const statusSpan = document.createElement('span');
-        statusSpan.className = "message-status";
-        if (message.status === 'sent') {
-            statusSpan.innerText = "✓"; // 'sent', 'delivered', or 'read'
-        }
-        if (message.status === 'delivered') {
-            statusSpan.innerText = "✓✓"; // 'sent', 'delivered', or 'read'
-        }
-        if (message.status === 'seen') {
-            statusSpan.innerText = "✅"; // 'sent', 'delivered', or 'read'
-        }
-        statusSpan.style.marginLeft = "35%"
-        secondOuterDiv.appendChild(statusSpan);
-        //deleting message
-        deleteButton.addEventListener('click', () => {
-            socket.emit('delete message', message)
-            outerDiv.remove()
-        })
-    }
-    outerDiv.appendChild(secondOuterDiv)
-    messageArea.appendChild(outerDiv);
-    messageArea.scrollTop = messageArea.scrollHeight;
-}
-
-//showing messages with photo or video
-function showingMediaMessage(url, msg, message) {
-
-    const messageArea = document.querySelector('.message-area')
-    const outerDiv = document.createElement("div")
-    const firstDiv = document.createElement('div')
-    const secondDiv = document.createElement('div')
-    const messagePar = document.createElement("p");
-
-    messagePar.style.margin = "auto"
-    messagePar.style.paddingBottom = "5px"
-    outerDiv.style.margin = "1%";
-    outerDiv.style.padding = "2%";
-    outerDiv.style.backgroundColor = "#bab5b5";
-    outerDiv.style.borderRadius = "0.7em";
-    const fileUrl = msg.fileUrl
-    if (url.includes('video')) {
-        firstDiv.innerHTML = `<p>${msg.username} :</p><video width="70%" height="80%" controls>
-                                         <source src=${url} type="video/mp4">
-                                     </video>`
-        outerDiv.append(firstDiv)
-        messageArea.scrollTop = messageArea.scrollHeight;
-
-    }
-    if (url.includes('image')) {
-        firstDiv.innerHTML = `<p>${msg.username} :</p><img src=${url} width="50%" height="50%">`
-        outerDiv.append(firstDiv)
-        messageArea.scrollTop = messageArea.scrollHeight;
-
-    }
-    if (msg.messageText) {
-        messagePar.innerText = msg.messageText;
-        secondDiv.appendChild(messagePar)
-    }
-    const timeSpan = document.createElement("span");
-    timeSpan.innerText = msg.timestamp;
-    secondDiv.appendChild(timeSpan)
-    outerDiv.appendChild(firstDiv)
-    outerDiv.appendChild(secondDiv)
-
-
-
-    //showing delete button for same username and message delivery indicator
-    if (msg.username === username) {
-        const statusSpan = document.createElement('span');
-        statusSpan.className = "message-status";
-        if (message.status === 'sent') {
-            statusSpan.innerText = "✓"; // 'sent'
-        }
-        if (message.status === 'delivered') {
-            statusSpan.innerText = "✓✓"; // 'delivered'
-        }
-        if (message.status === 'seen') {
-            statusSpan.innerText = "✅"; //'read'
-        }
-        statusSpan.style.marginLeft = "60%"
-        outerDiv.appendChild(statusSpan);
-
-
-        const deleteButton = document.createElement('button')
-        deleteButton.classList += " deleteButton"
-        deleteButton.innerText = 'Delete'
-        secondDiv.append(deleteButton)
-
-        deleteButton.addEventListener('click', () => {
-            socket.emit('delete message', message)
-            outerDiv.remove()
-        })
-    }
-    messageArea.appendChild(outerDiv)
-    messageArea.scrollTop = messageArea.scrollHeight;
-}
-
 //emoji picker
 emojiPicker(createPopup)
 function emojiPicker(createPopup) {
@@ -424,3 +276,18 @@ themeButton.addEventListener("click", () => {
     html.setAttribute("data-theme", newTheme);
     localStorage.setItem("theme", newTheme);
 });
+
+socket.on('update message status', ({ messageId, status }) => {
+    try {
+        const statusSpan = document.getElementById(messageId);
+        if (status === 'seen') {
+            statusSpan.innerText = "✅"
+        }
+        if (status === 'delivered') {
+            console.log('hitting delivered')
+            statusSpan.innerText = "✓✓"
+        }
+    } catch (err) {
+        console.error(err)
+    }
+})

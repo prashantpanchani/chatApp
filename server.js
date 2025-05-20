@@ -17,7 +17,7 @@ const io = new Server(httpserver, {
 });
 
 dbConnect()
-app.use('/public', express.static(path.join(__dirname, '/public')));
+app.use('/public', express.static(path.join(__dirname, 'public')));
 const PORT = process.env.PORT || 3000
 
 chatSocket(io)
