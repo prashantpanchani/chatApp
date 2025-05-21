@@ -2,7 +2,7 @@ import { createPopup } from 'https://cdn.skypack.dev/@picmo/popup-picker';
 import { uploadVideo } from './uploadvideo.js';
 import { showMessages } from './showMessages.js';
 import { showingMediaMessage } from './showingMediaMessage.js';
-
+import { updateReaction } from './reactions.js';
 
 const socket = io();
 const username = localStorage.getItem("username");
@@ -284,10 +284,13 @@ socket.on('update message status', ({ messageId, status }) => {
             statusSpan.innerText = "✅"
         }
         if (status === 'delivered') {
-            console.log('hitting delivered')
             statusSpan.innerText = "✓✓"
         }
     } catch (err) {
         console.error(err)
     }
+})
+
+socket.on('reaction updated', ({ messageId, reactions }) => {
+    updateReaction(messageId, reactions, socket, username)
 })

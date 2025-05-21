@@ -1,16 +1,28 @@
+import { createReactionButtons, displayReactions } from "./reactions.js";
+
 export function showingMediaMessage(url, msg, message, socket, username) {
     const messageArea = document.querySelector('.message-area')
     const outerDiv = document.createElement("div")
     const firstDiv = document.createElement('div')
     const secondDiv = document.createElement('div')
     const messagePar = document.createElement("p");
-    // outerDiv.id = message._id
 
+    outerDiv.dataset.messageId = message._id
+
+    secondDiv.style.position = 'absolute'
+    secondDiv.style.right = '20px'
+    secondDiv.style.display = 'inline-flex'
+    secondDiv.style.alignItems = 'center'
+    secondDiv.style.bottom = '5px'
+
+    // outerDiv.id = message._id
+    outerDiv.className = 'outerDivMessageArea'
+    outerDiv.style.position = 'relative'
     messagePar.style.margin = "auto"
     messagePar.style.paddingBottom = "5px"
-    outerDiv.style.margin = "1%";
-    outerDiv.style.padding = "2%";
-    outerDiv.style.backgroundColor = "#bab5b5";
+    // outerDiv.style.margin = "1%";
+    // outerDiv.style.padding = "2%";
+    // outerDiv.style.backgroundColor = "#bab5b5";
     outerDiv.style.borderRadius = "0.7em";
     const fileUrl = msg.fileUrl
     if (url.includes('video')) {
@@ -29,18 +41,36 @@ export function showingMediaMessage(url, msg, message, socket, username) {
     }
     if (msg.messageText) {
         messagePar.innerText = msg.messageText;
-        secondDiv.appendChild(messagePar)
+        firstDiv.appendChild(messagePar)
     }
     const timeSpan = document.createElement("span");
+    timeSpan.style.display = 'block'
     timeSpan.innerText = msg.timestamp;
-    secondDiv.appendChild(timeSpan)
+    firstDiv.appendChild(timeSpan)
     outerDiv.appendChild(firstDiv)
     outerDiv.appendChild(secondDiv)
 
 
 
+
     //showing delete button for same username and message delivery indicator
     if (msg.username === username) {
+        outerDiv.style.marginLeft = "auto";
+        outerDiv.style.marginRight = "1%";
+        outerDiv.style.width = "60%";
+        outerDiv.style.backgroundColor = "#dcf8c6";
+
+
+        const deleteButton = document.createElement('button')
+        deleteButton.classList += " deleteButton"
+        deleteButton.innerHTML = '<img width="20" height="20" src="https://img.icons8.com/ios-glyphs/30/trash--v1.png" alt="trash--v1"/>'
+        secondDiv.append(deleteButton)
+
+        deleteButton.addEventListener('click', () => {
+            socket.emit('delete message', message)
+            outerDiv.remove()
+        })
+
         const statusSpan = document.createElement('span');
         statusSpan.className = "message-status";
         statusSpan.id = message._id
@@ -53,23 +83,18 @@ export function showingMediaMessage(url, msg, message, socket, username) {
         if (message.status === 'seen') {
             statusSpan.innerText = "✅"; //'read'
         }
-        statusSpan.style.marginLeft = "60%"
-        outerDiv.appendChild(statusSpan);
-
-
-        const deleteButton = document.createElement('button')
-        deleteButton.classList += " deleteButton"
-        deleteButton.innerText = 'Delete'
-        secondDiv.append(deleteButton)
-
-        deleteButton.addEventListener('click', () => {
-            socket.emit('delete message', message)
-            outerDiv.remove()
-        })
+        statusSpan.style.marginLeft = "5%"
+        secondDiv.appendChild(statusSpan);
+    } else {
+        outerDiv.style.marginRight = "auto";
+        outerDiv.style.marginLeft = "1%";
+        outerDiv.style.width = "60%";
     }
     messageArea.appendChild(outerDiv)
     if (message.username !== username && message.status !== "seen") {
         socket.emit('message_seen', { messageId: message._id, senderName: message.username });
     }
+    createReactionButtons(outerDiv, message._id, socket, username)
+    displayReactions(outerDiv, message.reactions, socket, username)
     messageArea.scrollTop = messageArea.scrollHeight;
 }

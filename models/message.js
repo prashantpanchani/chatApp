@@ -15,7 +15,10 @@ const messageSchema = new mongoose.Schema({
     roomId: String,
     media_id: { type: mongoose.Schema.Types.ObjectId, ref: 'Media' }
     ,
-    status: String
+    status: String,
+    reactions: {
+        type: Object,
+    }
 })
 const Message = mongoose.model('Message', messageSchema)
 module.exports = Message

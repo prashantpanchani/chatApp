@@ -3,8 +3,8 @@ const Media = require("../models/media");
 const Message = require("../models/message");
 
 module.exports = function chatSocket(io) {
-    const users = {};
-
+    const users = {}
+    const messageReactions = {}
     io.on('connection', async (socket) => {
         socket.on('initiateChat', async (user) => {
             users[socket.id] = { username: user.username, roomId: user.roomId }
@@ -129,6 +129,30 @@ module.exports = function chatSocket(io) {
                 socket.broadcast.to(user.roomId).emit('user_disconnected', { username: user.username }); //send event to all client in room except sender
                 delete users[socket.id];
             }
+        })
+        socket.on('toggle reaction', ({ messageId, emoji, username }) => {
+            if (!messageReactions[messageId]) {
+                messageReactions[messageId] = {}
+            }
+            if (!messageReactions[messageId][emoji]) {
+                messageReactions[messageId][emoji] = [];
+            }
+            const userIndex = messageReactions[messageId][emoji].indexOf(username);
+            if (userIndex === -1) {
+                messageReactions[messageId][emoji].push(username)
+            } else {
+                messageReactions[messageId][emoji].splice(userIndex, 1)
+            }
+            io.emit('reaction updated', { messageId, reactions: messageReactions[messageId] || {} })
+            async function updateMessageReactionsInDatabase(messageId, messageReactions) {
+                try {
+                    const updatedMessage = await Message.findByIdAndUpdate(messageId, { reactions: messageReactions })
+                } catch (err) {
+                    console.log('error while updating reactions in database', err)
+                }
+            };
+            updateMessageReactionsInDatabase(messageId, messageReactions[messageId]);
+
         })
     })
 
