@@ -1,3 +1,5 @@
+import { createPopup } from 'https://cdn.skypack.dev/@picmo/popup-picker';
+
 const reactionEmojis = ['👍🏻', '❤️', '😆', '😯', '🔥']
 function createReactionButtons(messageDiv, messageId, socket, username) {
     const reactionsDiv = document.createElement('div')
@@ -11,8 +13,32 @@ function createReactionButtons(messageDiv, messageId, socket, username) {
         }
         reactionsDiv.appendChild(button)
     })
+    const reactionEmojiPicker = document.createElement('button')
+    reactionEmojiPicker.className = 'reaction-button emoji-picker-button'
+    reactionEmojiPicker.textContent = '✚';
+    const picker = createPopup({
+        emojiSize: '16px',
+        hideOnEmojiSelect: false
+    },
+        {
+            referenceElement: messageDiv,
+            triggerElement: reactionEmojiPicker,
+            position: "bottom-start",
+            showCloseButton: true,
+        }
+    );
+    reactionEmojiPicker.onclick = () => {
+        picker.toggle();
+        picker.addEventListener('emoji:select', (selection) => {
+            toggleReaction(messageId, selection.emoji, socket, username)
+        })
+
+    }
+    reactionsDiv.appendChild(reactionEmojiPicker)
     messageDiv.appendChild(reactionsDiv)
 }
+
+
 function toggleReaction(messageId, emoji, socket, username) {
     socket.emit('toggle reaction', { messageId, emoji, username })
 }

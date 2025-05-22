@@ -5,16 +5,31 @@ const Message = require("../models/message");
 module.exports = function chatSocket(io) {
     const users = {}
     const messageReactions = {}
+    const userDisconnectTimers = {}
+    const persistentUsers = {
+
+    }
     io.on('connection', async (socket) => {
+
         socket.on('initiateChat', async (user) => {
+            const wasAlreadyInRoom = persistentUsers[`${user.username}_${user.roomId}`]
+            const existingTimer = userDisconnectTimers[`${user.username}_${user.roomId}`];
+            if (existingTimer) {
+                clearTimeout(existingTimer);
+                delete userDisconnectTimers[`${user.username}_${user.roomId}`];
+            }
             users[socket.id] = { username: user.username, roomId: user.roomId }
             socket.join(user.roomId)
             room = user.roomId
 
-            const userList = Object.values(users)
-                .filter(u => u.roomId === user.roomId)
-                .map(u => u.username);
-            socket.broadcast.to(user.roomId).emit('new_user_connected', { username: user.username, userList }) //sending to all client in room except sender
+            persistentUsers[`${user.username}_${user.roomId}`] = true
+            if (!wasAlreadyInRoom) {
+                const userList = Object.values(users)
+                    .filter(u => u.roomId === user.roomId)
+                    .map(u => u.username);
+                socket.broadcast.to(user.roomId).emit('new_user_connected', { username: user.username, userList }) //sending to all client in room except sender
+            }
+
         })
 
         socket.on('userJoin', async (user) => {
@@ -126,7 +141,15 @@ module.exports = function chatSocket(io) {
         socket.on('disconnect', () => {
             const user = users[socket.id];
             if (user) {
-                socket.broadcast.to(user.roomId).emit('user_disconnected', { username: user.username }); //send event to all client in room except sender
+                const userKey = `${user.username}_${user.roomId}`
+                userDisconnectTimers[userKey] = setTimeout(() => {
+                    const isStillConnected = Object.values(users).some(u => u.username === user.username && u.roomId === user.roomId)
+                    if (!isStillConnected) {
+                        socket.broadcast.to(user.roomId).emit('user_disconnected', { username: user.username }); //send event to all client in room except sender
+                        delete persistentUsers[`${user.username}_${user.roomId}`]
+                    }
+                    delete userDisconnectTimers[userKey]
+                }, 3000)
                 delete users[socket.id];
             }
         })

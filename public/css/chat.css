@@ -210,9 +210,9 @@ p {
   top: 2%;
   bottom: auto;
 }
-#fileElement {
+/* #fileElement {
   color: var(--color-fg);
-}
+} */
 
 label {
   white-space: nowrap;
@@ -227,70 +227,11 @@ label {
   top: 7px;
 }
 
-@media (max-width: 600px) {
-  #selection {
-    right: 65%;
-    top: 7px;
-  }
-  .input-row {
-    display: flex;
-    flex-direction: row;
-    /* justify-content: center; */
-    width: 50%;
-    align-items: center;
-    margin-left: -100px;
-    /* padding-left: 20px; */
-    margin-top: 1em;
-  }
-  .message-input {
-    width: 50%;
-  }
-  .send-button {
-    position: relative;
-    left: -168%;
-  }
-  .selection {
-    position: relative;
-    top: 1%;
-    bottom: 1%;
-  }
-  .chat-container {
-    width: 117%;
-  }
-  .sidebar {
-    width: 25%;
-  }
-}
-
-/* :root {
-  --grid-unit: 1rem;
-  --border-radius-base: 0.5rem;
-} */
-
-[data-theme="light"] {
-  --color-bg: #ffffff;
-  --color-fg: #000000;
-  --bg: #000000;
-}
-
-[data-theme="dark"] {
-  --color-bg: #000000;
-  --color-fg: #ffffff;
-  --bg: #000000;
-}
-
-/* example use of CSS custom properties */
-body {
-  background-color: var(--color-bg);
-  color: var(--bg);
-  border: var(--color-fg);
-}
-
 .message-reactions {
   display: none;
   position: absolute;
-  bottom: -15px;
-  right: 70px;
+  bottom: -30px;
+  right: 26px;
   background-color: white;
   border-radius: 20px;
   padding: 5px 10px;
@@ -335,3 +276,93 @@ body {
   font-size: 11px;
   color: #666;
 }
+/* file upload button */
+#fileElement::file-selector-button {
+  position: absolute;
+  border-radius: 4px;
+  padding: 0 10px;
+  height: 25px;
+  cursor: pointer;
+  background-color: white;
+  border: 1px solid rgba(0, 0, 0, 0.16);
+  box-shadow: 0px 1px 0px rgba(0, 0, 0, 0.05);
+  /* margin-right: 16px; */
+  transition: background-color 200ms;
+}
+
+/* file upload button hover state */
+input[type="file"]::file-selector-button:hover {
+  background-color: #f3f4f6;
+}
+
+/* file upload button active state */
+input[type="file"]::file-selector-button:active {
+  background-color: #e5e7eb;
+}
+[data-theme="light"] {
+  --color-bg: #ffffff;
+  --color-fg: #000000;
+  --bg: #000000;
+}
+
+[data-theme="dark"] {
+  --color-bg: #000000;
+  --color-fg: #ffffff;
+  --bg: #000000;
+}
+
+/* example use of CSS custom properties */
+body {
+  background-color: var(--color-bg);
+  color: var(--bg);
+  border: var(--color-fg);
+}
+
+@media (max-width: 670px) {
+  #selection {
+    right: 65%;
+    top: 7px;
+  }
+  .input-row {
+    display: flex;
+    flex-direction: row;
+    /* justify-content: center; */
+    width: 50%;
+    align-items: center;
+    margin-left: -100px;
+    /* padding-left: 20px; */
+    margin-top: 1em;
+  }
+  .message-input {
+    width: 50%;
+  }
+  .send-button {
+    position: relative;
+    left: -168%;
+  }
+  .selection {
+    position: relative;
+    top: 1%;
+    bottom: 1%;
+  }
+  .chat-container {
+    width: 117%;
+  }
+  .sidebar {
+    width: 25%;
+  }
+
+  .reaction-button {
+    font-size: 12px;
+  }
+  .message-reactions {
+    right: -7px;
+    margin: 0px 0px;
+    padding: 5px 3px;
+  }
+}
+
+/* :root {
+  --grid-unit: 1rem;
+  --border-radius-base: 0.5rem;
+} */
