@@ -28,7 +28,6 @@ export function showMessages(msg, message, socket, username) {
     if (msg.username === username) {
         outerDiv.style.marginLeft = "auto";
         outerDiv.style.marginRight = "1%";
-        outerDiv.style.width = "60%";
         outerDiv.style.backgroundColor = "#dcf8c6";
 
         const deleteButton = document.createElement('button')

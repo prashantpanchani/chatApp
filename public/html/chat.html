@@ -16,17 +16,14 @@
     <button class="themeButton">Theme</button>
     <h2>Chat Room</h2>
     <div class="chat-container">
+      <div class="header">
+        <div class="sidebar-header"></div>
+        <div class="onlineUserDiv">Online Users:</div>
+        <ul class="sidebar-ul"></ul>
+      </div>
+
       <div class="chat-row">
         <div class="message-area"></div>
-        <div class="sidebar">
-          <div class="sidebar-header"></div>
-          <div class="sidebar-body">
-            <span>Online Users:</span>
-            <div>
-              <ul class="sidebar-ul"></ul>
-            </div>
-          </div>
-        </div>
       </div>
       <div class="input-indicator">
         <p class="indicator-p"></p>
@@ -71,6 +68,9 @@
         </div>
       </div>
     </div>
+    <script>
+      const onlineUserButton = document.querySelector(".onlineUserButton");
+    </script>
     <script src="/socket.io/socket.io.js"></script>
     <script src="/public/js/chat.js" type="module"></script>
     <script

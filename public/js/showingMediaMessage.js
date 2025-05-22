@@ -34,7 +34,7 @@ export function showingMediaMessage(url, msg, message, socket, username) {
 
     }
     if (url.includes('image')) {
-        firstDiv.innerHTML = `<p>${msg.username} :</p><img src=${url} width="50%" height="50%">`
+        firstDiv.innerHTML = `<p>${msg.username} :</p><img src=${url} width="40%" height="40%">`
         outerDiv.append(firstDiv)
         messageArea.scrollTop = messageArea.scrollHeight;
 
@@ -57,7 +57,6 @@ export function showingMediaMessage(url, msg, message, socket, username) {
     if (msg.username === username) {
         outerDiv.style.marginLeft = "auto";
         outerDiv.style.marginRight = "1%";
-        outerDiv.style.width = "60%";
         outerDiv.style.backgroundColor = "#dcf8c6";
 
 

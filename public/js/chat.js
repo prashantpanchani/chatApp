@@ -58,7 +58,7 @@ socket.emit('initiateChat', user)
 //showing username
 const sidebarHeader = document.querySelector(".sidebar-header");
 const usernamePar = document.createElement("p");
-usernamePar.innerText = "username :" + (username ?? 'Guest');
+usernamePar.innerText = "username : " + (username ?? 'Guest') + ' | room :' + roomId;
 sidebarHeader.appendChild(usernamePar)
 
 socket.emit('userJoin', user)
@@ -148,7 +148,6 @@ socket.on('user_typing_status', (data) => {
 })
 
 let ul = document.querySelector('.sidebar-ul')
-
 function onlineUser(data) {
     if (ul) {
         ul.innerHTML = ""
