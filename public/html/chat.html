@@ -13,13 +13,15 @@
   </head>
 
   <body>
-    <button class="themeButton">Theme</button>
+    <button class="themeButton"></button>
     <h2>Chat Room</h2>
     <div class="chat-container">
       <div class="header">
         <div class="sidebar-header"></div>
         <div class="onlineUserDiv">Online Users:</div>
-        <ul class="sidebar-ul"></ul>
+        <ul class="sidebar-ul">
+          <li>Online Users :</li>
+        </ul>
       </div>
 
       <div class="chat-row">
@@ -33,20 +35,29 @@
           <form action="" id="messageForm">
             <section id="selection-outer">
               <div id="selection">
+                <button id="section-file" class="empty" type="button">
+                  📤Upload
+                </button>
                 <button id="selection-emoji" class="empty" type="button">
                   😀
                 </button>
               </div>
             </section>
             <div style="display: flex">
-              <div style="display: flex; flex-direction: column; width: 70%">
+              <div
+                style="
+                  display: flex;
+                  flex-direction: column;
+                  width: 70%;
+                  margin-left: -6.5%;
+                "
+              >
                 <input
                   type="text"
                   placeholder="Type Your Message.."
                   class="message-input"
                 />
                 <div style="margin-top: 1rem; display: flex">
-                  <label for="fileElement">Select File :</label>
                   <input
                     type="file"
                     name=""
@@ -54,14 +65,13 @@
                     accept="image/*,video/*"
                     style="padding-left: 30px"
                   />
-                  <button type="button" class="fileUploadButton">
-                    Send File
-                  </button>
-                  <!-- <input type="submit" value="Upload File" /> -->
                 </div>
               </div>
-              <div style="width: 20%">
+              <div style="display: flex; margin-left: 10px" class="button-div">
                 <button class="send-button" type="submit">Send Message</button>
+                <button type="button" class="fileUploadButton">
+                  Send File
+                </button>
               </div>
             </div>
           </form>

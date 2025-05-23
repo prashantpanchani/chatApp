@@ -44,6 +44,7 @@ export function showingMediaMessage(url, msg, message, socket, username) {
         firstDiv.appendChild(messagePar)
     }
     const timeSpan = document.createElement("span");
+    timeSpan.style.fontSize = "10px"
     timeSpan.style.display = 'block'
     timeSpan.innerText = msg.timestamp;
     firstDiv.appendChild(timeSpan)
@@ -57,12 +58,13 @@ export function showingMediaMessage(url, msg, message, socket, username) {
     if (msg.username === username) {
         outerDiv.style.marginLeft = "auto";
         outerDiv.style.marginRight = "1%";
-        outerDiv.style.backgroundColor = "#dcf8c6";
+        outerDiv.style.backgroundColor = "#82abf8"
+        outerDiv.style.color = "white"
 
 
         const deleteButton = document.createElement('button')
-        deleteButton.classList += " deleteButton"
-        deleteButton.innerHTML = '<img width="20" height="20" src="https://img.icons8.com/ios-glyphs/30/trash--v1.png" alt="trash--v1"/>'
+        deleteButton.classList += "deleteButton"
+        deleteButton.innerText = '🗑️'
         secondDiv.append(deleteButton)
 
         deleteButton.addEventListener('click', () => {

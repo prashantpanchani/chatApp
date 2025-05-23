@@ -6,9 +6,7 @@ module.exports = function chatSocket(io) {
     const users = {}
     const messageReactions = {}
     const userDisconnectTimers = {}
-    const persistentUsers = {
-
-    }
+    const persistentUsers = {}
     io.on('connection', async (socket) => {
 
         socket.on('initiateChat', async (user) => {

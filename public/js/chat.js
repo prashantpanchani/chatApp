@@ -20,6 +20,11 @@ const toBase64 = file => new Promise((resolve, reject) => {
 
 //file upload
 const fileUploadButton = document.querySelector('.fileUploadButton')
+const fileUploadEmojiButton = document.querySelector("#section-file")
+const fileElement = document.querySelector("#fileElement")
+fileUploadEmojiButton.onclick = () => {
+    fileElement.click()
+}
 fileUploadButton.addEventListener('click', () => {
     const timestamp = new Date().toLocaleTimeString('en-US', {
         hour: '2-digit',
@@ -121,11 +126,8 @@ socket.on("chat message_all", ({ msg, message }) => {
     socket.emit('message_delivered', { messageId: message._id, senderName: message.username })
     if (!msg.fileUrl) {
         showMessages(msg, message, socket, username)
-        // socket.emit('message_delivered', { messageId: message._id })
     } else if (msg.fileUrl) {
         showingMediaMessage(msg.fileUrl, msg, message, socket, username)
-        // socket.emit('message_delivered', { messageId: message._id })
-
     }
 });
 
@@ -150,7 +152,7 @@ socket.on('user_typing_status', (data) => {
 let ul = document.querySelector('.sidebar-ul')
 function onlineUser(data) {
     if (ul) {
-        ul.innerHTML = ""
+        ul.innerHTML = "<li>Online Users :</li>"
     }
     const userList = data.userList
     if (userList) {
@@ -170,13 +172,10 @@ socket.on("new_user_connected", (data) => {
     const messageArea = document.querySelector(".message-area");
     const outerDiv = document.createElement("div");
     const messagePar = document.createElement("p");
+    outerDiv.className = "outerDivMessageArea"
 
-    outerDiv.style.margin = "1%";
-    outerDiv.style.padding = "2%";
-    outerDiv.style.backgroundColor = "#bab5b5";
-    outerDiv.style.borderRadius = "0.7em";
 
-    messagePar.innerText = `${data.username} Joined chat`
+    messagePar.innerText = `${data.username} Joined The Chat`
     messagePar.style.height = "10%"
     outerDiv.append(messagePar)
     messageArea.append(outerDiv)
@@ -210,13 +209,9 @@ socket.on("user_disconnected", (data) => {
     const messageArea = document.querySelector(".message-area");
     const outerDiv = document.createElement("div");
     const messagePar = document.createElement("p");
+    outerDiv.className = "outerDivMessageArea"
 
-    outerDiv.style.margin = "1%";
-    outerDiv.style.padding = "2%";
-    outerDiv.style.backgroundColor = "#bab5b5";
-    outerDiv.style.borderRadius = "0.7em";
-
-    messagePar.innerText = `${data.username} Left chat`
+    messagePar.innerText = `${data.username} Left The Chat`
     outerDiv.append(messagePar)
     messageArea.append(outerDiv)
     setTimeout(() => { outerDiv.remove() }, 1000)
@@ -268,10 +263,12 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 const themeButton = document.querySelector(".themeButton");
+themeButton.innerText = "🌞"
 themeButton.addEventListener("click", () => {
     const html = document.querySelector(".html");
     let currentTheme = html.getAttribute("data-theme") || 'light';
     const newTheme = currentTheme === "light" ? "dark" : "light";
+    newTheme === "light" ? themeButton.textContent = "🌞" : themeButton.textContent = "🌙"
     html.setAttribute("data-theme", newTheme);
     localStorage.setItem("theme", newTheme);
 });
@@ -282,7 +279,7 @@ socket.on('update message status', ({ messageId, status }) => {
         if (status === 'seen') {
             statusSpan.innerText = "✅"
         }
-        if (status === 'delivered') {
+        else if (status === 'delivered') {
             statusSpan.innerText = "✓✓"
         }
     } catch (err) {
