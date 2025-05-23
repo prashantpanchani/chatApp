@@ -30,10 +30,13 @@ p {
 /* Outer container */
 .chat-container {
   width: 80%;
+  gap: 5px;
   display: flex;
   justify-content: center;
   flex-direction: column;
   align-items: center;
+  box-shadow: var(--card-shadow);
+  border-radius: 16px;
 }
 
 /* Chat and sidebar layout */
@@ -47,16 +50,13 @@ p {
 
 /* Message area */
 .message-area {
-  background-color: rgb(236, 236, 236);
+  background-color: var(--mabg);
   width: 80%;
   border: 1px solid var(--color-fg);
   border-radius: 0.5rem;
   height: 100%;
   display: block;
   overflow-y: auto;
-}
-#message-from {
-  width: 100%;
 }
 .outerDivMessageArea {
   gap: 5px;
@@ -124,7 +124,7 @@ p {
 }
 
 .onlineUserDiv:hover {
-  background-color: #f0f0f0; /* Optional: highlight on hover */
+  opacity: 0.8;
 }
 
 .sidebar-ul li {
@@ -152,7 +152,12 @@ p {
   background-color: var(--head);
   margin-top: 1em;
 }
-
+.message-input-div {
+  display: flex;
+  flex-direction: column;
+  width: 68%;
+  margin-left: -6.5%;
+}
 /* Message input */
 .message-input {
   padding-left: 10px;
@@ -178,7 +183,7 @@ input:focus {
 }
 .themeButton {
   position: absolute;
-  left: 96%;
+  left: 89%;
   top: 1%;
   z-index: 100;
   font-size: 24px;
@@ -187,12 +192,12 @@ input:focus {
 }
 /* Send button */
 .send-button {
-  padding: 0.5em 0.5em;
+  padding: 0.5em 3em;
   background-color: var(--head);
   color: var(--text-primary);
   border: 1px solid var(--border);
   border-radius: 0.5rem;
-  margin-left: 1em;
+  margin-left: 2em;
   height: 3em;
   width: fit-content;
   cursor: pointer;
@@ -202,26 +207,6 @@ input:focus {
   outline: none;
   border-color: var(--accent);
   box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.2);
-}
-.fileUploadButton {
-  padding: 0.5em 0.5em;
-  height: 3em;
-  background-color: var(--head);
-  color: var(--text-primary);
-  border: 1px solid var(--border);
-  border-radius: 0.5rem;
-  cursor: pointer;
-  white-space: nowrap;
-  transition: border-color 0.2s, box-shadow 0.2s;
-}
-.fileUploadButton:hover {
-  outline: none;
-  border-color: var(--accent);
-  box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.2);
-}
-
-.fileUploadButton:hover {
-  opacity: 0.8;
 }
 
 .send-button:active {
@@ -252,15 +237,19 @@ input:focus {
 .deleteButton:hover {
   transform: scale(1.2);
 }
-#selection-outer {
-  z-index: 1;
-  position: relative;
-  left: 1%;
-  right: 1%;
-  top: 2%;
-  bottom: auto;
-}
+
 #fileElement {
+  position: absolute;
+  width: 140px;
+  height: 2em;
+  z-index: 1000;
+  top: 1%;
+  left: 80%;
+}
+input[type="file"]::-webkit-file-upload-button {
+  display: none;
+}
+input[type="file"]::file-selector-button {
   display: none;
 }
 #formDiv {
@@ -268,8 +257,12 @@ input:focus {
 }
 #selection {
   position: absolute;
-  right: 37%;
-  top: 7px;
+  right: 39%;
+  top: 8px;
+}
+#selection button {
+  border: 1px solid var(--border);
+  border-radius: 5px;
 }
 
 .message-reactions {
@@ -325,9 +318,6 @@ input:focus {
 [data-theme="light"] {
   --bg-primary: #ffffff;
   --bg-secondary: #f5f7fa;
-  --bg: #000000;
-  --message-card: rgb(194, 214, 250);
-  --bg: #000000;
   --text-primary: #333333;
   --border: #e2e8f0;
   --input-bg: #ffffff;
@@ -335,14 +325,13 @@ input:focus {
   --head: linear-gradient(90deg, #73dff7 0%, #6673ff 90%);
   --card-shadow: rgba(0, 0, 0, 0.25) 0px 14px 28px,
     rgba(0, 0, 0, 0.22) 0px 10px 10px;
+  --mabg: rgb(241, 241, 241);
 }
 
 [data-theme="dark"] {
-  --bg: #000000;
-  --message-card: rgb(130, 171, 248);
+  /* --bg: #000000; */
   --bg-primary: #1e1e2e;
   --bg-secondary: #181825;
-  --bg: #ffffff;
   --text-primary: #f1f5f9;
   --border: #2d3748;
   --input-bg: #2d3748;
@@ -350,12 +339,19 @@ input:focus {
   --head: linear-gradient(90deg, #4b6cb7 0%, #182848 100%);
   --card-shadow: rgba(180, 175, 175, 0.25) 0px 14px 28px,
     rgba(93, 92, 92, 0.22) 0px 10px 10px;
+  --mabg: rgb(40, 44, 60);
 }
 
 @media (max-width: 670px) {
   #selection {
     right: 40%;
     top: 7px;
+  }
+  #fileElement {
+    left: 40%;
+    top: -40%;
+    width: 120px;
+    font-size: 10px;
   }
   .outerDivMessageArea {
     font-size: 14px;
@@ -372,12 +368,12 @@ input:focus {
     font-size: 9px;
   }
   .button-div {
-    display: flex;
-    flex-direction: column;
+    margin-left: 4px;
   }
   .send-button {
-    padding: 0;
-    font-size: 10px;
+    padding: 0.5em 2em;
+    height: 3em;
+    font-size: 12px;
     margin-left: 0;
   }
   .fileUploadButton {

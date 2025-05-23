@@ -17,5 +17,6 @@ export async function uploadVideo(VideoUrl, timestamp, username, socket) {
     if (input.value) {
         messagePayload.messageText = input.value
     }
+    input.value = ''
     socket.emit('media upload', { ...messagePayload })
 }

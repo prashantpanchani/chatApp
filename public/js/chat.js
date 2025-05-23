@@ -19,45 +19,8 @@ const toBase64 = file => new Promise((resolve, reject) => {
 
 
 //file upload
-const fileUploadButton = document.querySelector('.fileUploadButton')
-const fileUploadEmojiButton = document.querySelector("#section-file")
-const fileElement = document.querySelector("#fileElement")
-fileUploadEmojiButton.onclick = () => {
-    fileElement.click()
-}
-fileUploadButton.addEventListener('click', () => {
-    const timestamp = new Date().toLocaleTimeString('en-US', {
-        hour: '2-digit',
-        minute: '2-digit',
-        hour12: true
-    });
-    const fileElement = document.querySelector('#fileElement')
-    if (!fileElement.files[0]) {
-        alert('Please Select File')
-        return
-    }
-    const file = fileElement.files[0]
-    fileElement.value = ''
-    toBase64(file).then((fileUrl) => {
-        let VideoUrl
-        if (fileUrl.includes('video')) {
-            VideoUrl = fileUrl
-            uploadVideo(VideoUrl, timestamp, username, socket)
-        }
-        const input = document.querySelector(".message-input");
 
-        if (fileUrl.includes('image')) {
-            const messagePayload = {
-                timestamp, username, fileUrl
-            }
-            if (input.value) {
-                messagePayload.messageText = input.value
-                input.value = ''
-            }
-            socket.emit('media upload', { ...messagePayload })
-        }
-    })
-})
+
 socket.emit('initiateChat', user)
 
 //showing username
@@ -87,16 +50,53 @@ socket.on('previousMessage', (messages) => {
         messageArea.scrollTop = messageArea.scrollHeight;
     }
 })
+
+
+const fileUploadEmojiButton = document.querySelector("#section-file")
+const fileElement = document.querySelector("#fileElement")
+fileUploadEmojiButton.onclick = () => {
+    fileElement.click()
+}
 const messageForm = document.querySelector("#messageForm")
 messageForm.addEventListener("submit", (e) => {
     e.preventDefault()
     const input = document.querySelector(".message-input");
+    const messageValue = input.value
     const fileElement = document.querySelector('#fileElement')
+    const file = fileElement.files[0]
+    if (file) {
+        fileElement.value = ''
+        toBase64(file).then((fileUrl) => {
+            const timestamp = new Date().toLocaleTimeString('en-US', {
+                hour: '2-digit',
+                minute: '2-digit',
+                hour12: true
+            });
+            let VideoUrl
+            if (fileUrl.includes('video')) {
+                VideoUrl = fileUrl
+                uploadVideo(VideoUrl, timestamp, username, socket)
+            }
+            const input = document.querySelector(".message-input");
+
+            if (fileUrl.includes('image')) {
+                const messagePayload = {
+                    timestamp, username, fileUrl
+                }
+                if (input.value) {
+                    messagePayload.messageText = input.value
+                    input.value = ''
+                }
+                socket.emit('media upload', { ...messagePayload })
+            }
+        })
+    }
+
     if (!input.value) {
         alert('please Enter Message')
         return
     }
-    if (input.value) {
+    if (input.value && !file) {
         const timestamp = new Date().toLocaleTimeString('en-US', {
             hour: '2-digit',
             minute: '2-digit',
@@ -107,7 +107,7 @@ messageForm.addEventListener("submit", (e) => {
             timestamp,
             username,
         });
-        input.value = "";
+        input.value = " ";
     }
 });
 
@@ -243,7 +243,7 @@ function emojiPicker(createPopup) {
         {
             referenceElement: selectionEmoji,
             triggerElement: selectionEmoji,
-            position: "bottom-start",
+            position: "bottom-end",
             showCloseButton: true,
         }
     );
