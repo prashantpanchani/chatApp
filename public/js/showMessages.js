@@ -14,6 +14,8 @@ export function showMessages(msg, message, socket, username) {
     messagePar.className += " messageParMessageArea"
     messagePar.innerText = msg.username + " : " + msg.messageText;
     timeSpan.innerText = msg.timestamp;
+    timeSpan.style.fontSize = "10px"
+
 
     outerDiv.appendChild(messagePar);
     outerDiv.appendChild(timeSpan);
@@ -24,14 +26,15 @@ export function showMessages(msg, message, socket, username) {
     secondOuterDiv.style.position = 'absolute'
     secondOuterDiv.style.right = '20px'
     secondOuterDiv.style.bottom = '5px'
-    // secondOuterDiv.style.gap = '5px'
+
     if (msg.username === username) {
         outerDiv.style.marginLeft = "auto";
         outerDiv.style.marginRight = "1%";
-        outerDiv.style.backgroundColor = "#dcf8c6";
+        outerDiv.style.backgroundColor = "#82abf8"
+        outerDiv.style.color = "white"
 
         const deleteButton = document.createElement('button')
-        deleteButton.classList += " deleteButton"
+        deleteButton.classList += "deleteButton"
         deleteButton.innerText = '🗑️'
         secondOuterDiv.append(deleteButton)
 
@@ -40,13 +43,13 @@ export function showMessages(msg, message, socket, username) {
         statusSpan.id = message._id
 
         if (message.status === 'sent') {
-            statusSpan.innerText = "✓"; // 'sent', 'delivered', or 'read'
+            statusSpan.innerText = "✓";
         }
         if (message.status === 'delivered') {
-            statusSpan.innerText = "✓✓"; // 'sent', 'delivered', or 'read'
+            statusSpan.innerText = "✓✓";
         }
         if (message.status === 'seen') {
-            statusSpan.innerText = "✅"; // 'sent', 'delivered', or 'read'
+            statusSpan.innerText = "✅";
         }
         statusSpan.style.marginLeft = "5%"
         secondOuterDiv.appendChild(statusSpan);

@@ -10,16 +10,13 @@ body {
   align-items: center;
   flex-direction: column;
   font-family: Arial, sans-serif;
-  /* margin: 0; */
-  /* padding: 0; */
-  /* z-index: 0; */
 }
 
 /* Header */
 h2 {
-  background-color: #bab5b5;
+  background-color: #75aeff;
   color: white;
-  border: 1px solid var(--color-fg);
+  border: 1px solid var(--border);
   border-radius: 0.5em;
   padding: 1%;
   margin-top: 1em;
@@ -50,13 +47,11 @@ p {
 
 /* Message area */
 .message-area {
-  background-color: whitesmoke;
+  background-color: rgb(236, 236, 236);
   width: 80%;
   border: 1px solid var(--color-fg);
   border-radius: 0.5rem;
   height: 100%;
-  /* text-align: right; */
-  /* padding-right: 20px; */
   display: block;
   overflow-y: auto;
 }
@@ -64,38 +59,28 @@ p {
   width: 100%;
 }
 .outerDivMessageArea {
+  gap: 5px;
   margin: 1%;
   padding: 2%;
-  background-color: #bab5b5;
+  background-color: rgb(246, 246, 246);
+  color: black;
   border-radius: 0.7em;
   word-wrap: break-word;
   width: 50%;
+  box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
 }
 .messageParMessageArea {
   margin: auto;
 }
-
-/* Sidebar */
-/* .sidebar {
-  width: 20%;
-  border: 1px solid var(--color-fg);
-  border-radius: 0.5rem;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  white-space: pre-line;
-} */
-
 /* Sidebar header */
 .sidebar-header {
-  background-color: rgb(222, 213, 213);
-  height: 99%;
+  background-color: var(--head);
+  height: 90%;
   display: flex;
   justify-content: center;
   align-items: center;
   border-radius: 0.5em;
-  padding: 1px;
+  margin-left: 20px;
   width: fit-content;
 }
 .header {
@@ -103,15 +88,17 @@ p {
   width: 80%;
   display: flex;
   justify-content: space-between;
-  background-color: #bab5b5;
+  background: var(--head);
+  color: var(--text-primary);
+  border: 1px solid black;
   border-radius: 0.5em;
   position: relative;
 }
 .sidebar-ul {
-  display: none; /* Hide by default */
+  display: none;
   left: 100%;
   position: absolute;
-  background: white;
+  background: #82abf8;
   border: 1px solid #ccc;
   border-radius: 4px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
@@ -127,17 +114,17 @@ p {
 
 .onlineUserDiv:hover + .sidebar-ul,
 .sidebar-ul:hover {
-  display: block; /* Show when div is hovered OR when ul itself is hovered */
+  display: block;
 }
 
 .onlineUserDiv {
-  cursor: pointer; /* Show it's interactive */
+  cursor: pointer;
   padding: 8px;
   border-radius: 4px;
 }
 
 .onlineUserDiv:hover {
-  background-color: #f0f0f0; /* Optional: highlight on hover */
+  background-color: #f0f0f0;
 }
 
 .sidebar-ul li {
@@ -159,47 +146,80 @@ p {
 }
 /* Message input row */
 .input-row {
-  /* display: flex; */
-  /* flex-direction: column; */
-  /* justify-content: center; */
   width: 80%;
   align-items: center;
-  margin-left: 75px;
-  /* padding-left: 20px; */
+  margin-left: 115px;
+  background-color: var(--head);
   margin-top: 1em;
 }
 
 /* Message input */
 .message-input {
-  width: 95%;
-  border: 1px solid var(--color-fg);
-  border-radius: 0.5rem;
-  height: 2.5em;
   padding-left: 10px;
   width: 100%;
 }
-
+input {
+  height: 2.5em;
+  width: 70%;
+  border: 1px solid var(--border);
+  border-radius: 0.5rem;
+  background-color: var(--input-bg);
+  color: var(--text-primary);
+  font-size: 1rem;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+input:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.2);
+}
+.button-div {
+  gap: 4px;
+}
+.themeButton {
+  position: absolute;
+  left: 96%;
+  top: 1%;
+  z-index: 100;
+  font-size: 24px;
+  background: none;
+  border: none;
+}
 /* Send button */
 .send-button {
-  padding: 0.5em 1em;
-  background-color: var(--color-fg);
-  color: var(--color-bg);
-  border: 1px solid var(--color-fg);
+  padding: 0.5em 0.5em;
+  background-color: var(--head);
+  color: var(--text-primary);
+  border: 1px solid var(--border);
   border-radius: 0.5rem;
   margin-left: 1em;
   height: 3em;
   width: fit-content;
   cursor: pointer;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.send-button:hover {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.2);
 }
 .fileUploadButton {
-  padding: 0.5em 1em;
-  background-color: var(--color-fg);
-  color: var(--color-bg);
-  border: 1px solid var(--color-fg);
+  padding: 0.5em 0.5em;
+  height: 3em;
+  background-color: var(--head);
+  color: var(--text-primary);
+  border: 1px solid var(--border);
   border-radius: 0.5rem;
   cursor: pointer;
   white-space: nowrap;
+  transition: border-color 0.2s, box-shadow 0.2s;
 }
+.fileUploadButton:hover {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.2);
+}
+
 .fileUploadButton:hover {
   opacity: 0.8;
 }
@@ -240,20 +260,15 @@ p {
   top: 2%;
   bottom: auto;
 }
-/* #fileElement {
-  color: var(--color-fg);
-} */
-
-label {
-  white-space: nowrap;
-  color: var(--color-fg);
+#fileElement {
+  display: none;
 }
 #formDiv {
   position: relative;
 }
 #selection {
   position: absolute;
-  right: 30%;
+  right: 37%;
   top: 7px;
 }
 
@@ -306,73 +321,69 @@ label {
   font-size: 11px;
   color: #666;
 }
-/* file upload button */
-#fileElement::file-selector-button {
-  position: absolute;
-  border-radius: 4px;
-  padding: 0 10px;
-  height: 25px;
-  cursor: pointer;
-  background-color: white;
-  border: 1px solid rgba(0, 0, 0, 0.16);
-  box-shadow: 0px 1px 0px rgba(0, 0, 0, 0.05);
-  /* margin-right: 16px; */
-  transition: background-color 200ms;
-}
 
-/* file upload button hover state */
-input[type="file"]::file-selector-button:hover {
-  background-color: #f3f4f6;
-}
-
-/* file upload button active state */
-input[type="file"]::file-selector-button:active {
-  background-color: #e5e7eb;
-}
 [data-theme="light"] {
   --bg-primary: #ffffff;
   --bg-secondary: #f5f7fa;
-  --color-bg: #ffffff;
-  --color-fg: #000000;
   --bg: #000000;
+  --message-card: rgb(194, 214, 250);
+  --bg: #000000;
+  --text-primary: #333333;
+  --border: #e2e8f0;
+  --input-bg: #ffffff;
+  --accent: #7c3aed;
+  --head: linear-gradient(90deg, #73dff7 0%, #6673ff 90%);
+  --card-shadow: rgba(0, 0, 0, 0.25) 0px 14px 28px,
+    rgba(0, 0, 0, 0.22) 0px 10px 10px;
 }
 
 [data-theme="dark"] {
+  --bg: #000000;
+  --message-card: rgb(130, 171, 248);
   --bg-primary: #1e1e2e;
   --bg-secondary: #181825;
-  --color-bg: #000000;
-  --color-fg: #ffffff;
-  --bg: #000000;
-}
-
-/* example use of CSS custom properties */
-body {
-  background-color: var(--color-bg);
-  color: var(--bg);
-  border: var(--color-fg);
+  --bg: #ffffff;
+  --text-primary: #f1f5f9;
+  --border: #2d3748;
+  --input-bg: #2d3748;
+  --accent: #9b87f5;
+  --head: linear-gradient(90deg, #4b6cb7 0%, #182848 100%);
+  --card-shadow: rgba(180, 175, 175, 0.25) 0px 14px 28px,
+    rgba(93, 92, 92, 0.22) 0px 10px 10px;
 }
 
 @media (max-width: 670px) {
   #selection {
-    right: 65%;
+    right: 40%;
     top: 7px;
   }
+  .outerDivMessageArea {
+    font-size: 14px;
+    padding: 3%;
+  }
   .input-row {
-    display: flex;
-    flex-direction: row;
-    /* justify-content: center; */
-    width: 50%;
-    align-items: center;
-    margin-left: -100px;
-    /* padding-left: 20px; */
-    margin-top: 1em;
+    width: 90%;
   }
   .message-input {
-    width: 50%;
+    margin-left: -5%;
+    width: 100%;
+  }
+  .deleteButton {
+    font-size: 9px;
+  }
+  .button-div {
+    display: flex;
+    flex-direction: column;
   }
   .send-button {
-    position: relative;
-    left: -168%;
+    padding: 0;
+    font-size: 10px;
+    margin-left: 0;
+  }
+  .fileUploadButton {
+    font-size: 10px;
+    padding: 0%;
+    margin-right: 10px;
   }
   .selection {
     position: relative;
@@ -395,8 +406,3 @@ body {
     padding: 5px 3px;
   }
 }
-
-/* :root {
-  --grid-unit: 1rem;
-  --border-radius-base: 0.5rem;
-} */
