@@ -99,9 +99,13 @@ module.exports = function chatSocket(io) {
 
         socket.on('message_delivered', async ({ messageId, senderName }) => {
             try {
-                await Message.findByIdAndUpdate(messageId, { status: 'delivered' })
-                const senderSocketId = Object.keys(users).find(id => users[id].username === senderName)
-                io.to(senderSocketId).emit('update message status', { messageId, status: 'delivered' })
+                const updatedMessage = await Message.findByIdAndUpdate(messageId, { status: 'delivered' }, { new: true })
+                if (updatedMessage) {
+                    const senderSocketId = Object.keys(users).find(id => users[id].username === senderName)
+                    if (senderSocketId) {
+                        io.to(senderSocketId).emit('update_message_status', { messageId, status: 'delivered' })
+                    }
+                }
             } catch (error) {
                 console.error('error while message delivered', error)
             }
@@ -109,9 +113,13 @@ module.exports = function chatSocket(io) {
 
         socket.on('message_seen', async ({ messageId, senderName }) => {
             try {
-                await Message.findByIdAndUpdate(messageId, { status: 'seen' })
-                const senderSocketId = Object.keys(users).find(id => users[id].username === senderName)
-                io.to(senderSocketId).emit('update message status', { messageId, status: 'seen' })
+                const updatedMessage = await Message.findByIdAndUpdate(messageId, { status: 'seen' }, { new: true })
+                if (updatedMessage) {
+                    const senderSocketId = Object.keys(users).find(id => users[id].username === senderName)
+                    if (senderSocketId) {
+                        io.to(senderSocketId).emit('update_message_status', { messageId, status: 'seen' })
+                    }
+                }
             } catch (error) {
                 console.error('error while message seen ', error)
             }

@@ -4,10 +4,21 @@ import { showMessages } from './showMessages.js';
 import { showingMediaMessage } from './showingMediaMessage.js';
 import { updateReaction } from './reactions.js';
 
+console.log("username:", localStorage.getItem("username"));
+console.log("roomId:", localStorage.getItem("roomId"));
+
 const socket = io();
 const username = localStorage.getItem("username");
 const roomId = localStorage.getItem('roomId')
 const user = { username, roomId }
+
+console.log(username)
+if (!username || !roomId) {
+    console.log('if check working')
+    setTimeout(() => {
+        window.location.href = "/";
+    }, 1000)
+}
 
 //to convert files(image video to base64 string of asci char)
 const toBase64 = file => new Promise((resolve, reject) => {
@@ -38,7 +49,7 @@ socket.on('previousMessage', (messages) => {
         messages.forEach(msg => {
             if (msg.status !== "delivered" && msg.status !== "seen" && msg.username !== username) {
                 socket.emit('message_delivered', { messageId: msg._id, senderName: msg.username })
-                msg.status === 'delivered'
+                // msg.status === 'delivered'
             }
             if (msg.messageText && !msg.media_id) {
                 showMessages(msg, msg, socket, username)
@@ -273,14 +284,18 @@ themeButton.addEventListener("click", () => {
     localStorage.setItem("theme", newTheme);
 });
 
-socket.on('update message status', ({ messageId, status }) => {
+socket.on('update_message_status', ({ messageId, status }) => {
     try {
         const statusSpan = document.getElementById(messageId);
-        if (status === 'seen') {
-            statusSpan.innerText = "✅"
-        }
-        else if (status === 'delivered') {
-            statusSpan.innerText = "✓✓"
+        if (statusSpan) {
+            if (status === 'seen') {
+                statusSpan.innerText = "✅"
+            }
+            else if (status === 'delivered') {
+                statusSpan.innerText = "✓✓"
+            } else if (status === 'sent') {
+                statusSpan.innerText === "✓"
+            }
         }
     } catch (err) {
         console.error(err)
