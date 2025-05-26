@@ -99,6 +99,10 @@ module.exports = function chatSocket(io) {
 
         socket.on('message_delivered', async ({ messageId, senderName }) => {
             try {
+                const currentMessage = await Message.findById(messageId);
+                if (!currentMessage || currentMessage.status !== 'sent' || currentMessage.status === 'seen') {
+                    return; // Don't update if not in 'sent' status
+                }
                 const updatedMessage = await Message.findByIdAndUpdate(messageId, { status: 'delivered' }, { new: true })
                 if (updatedMessage) {
                     const senderSocketId = Object.keys(users).find(id => users[id].username === senderName)
@@ -113,6 +117,10 @@ module.exports = function chatSocket(io) {
 
         socket.on('message_seen', async ({ messageId, senderName }) => {
             try {
+                const currentMessage = await Message.findById(messageId);
+                if (!currentMessage || currentMessage.status === 'seen') {
+                    return; // Don't update if already seen
+                }
                 const updatedMessage = await Message.findByIdAndUpdate(messageId, { status: 'seen' }, { new: true })
                 if (updatedMessage) {
                     const senderSocketId = Object.keys(users).find(id => users[id].username === senderName)

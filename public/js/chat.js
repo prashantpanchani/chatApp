@@ -4,15 +4,13 @@ import { showMessages } from './showMessages.js';
 import { showingMediaMessage } from './showingMediaMessage.js';
 import { updateReaction } from './reactions.js';
 
-console.log("username:", localStorage.getItem("username"));
-console.log("roomId:", localStorage.getItem("roomId"));
 
 const socket = io();
 const username = localStorage.getItem("username");
 const roomId = localStorage.getItem('roomId')
 const user = { username, roomId }
 
-console.log(username)
+
 if (!username || !roomId) {
     console.log('if check working')
     setTimeout(() => {
@@ -287,6 +285,10 @@ themeButton.addEventListener("click", () => {
 socket.on('update_message_status', ({ messageId, status }) => {
     try {
         const statusSpan = document.getElementById(messageId);
+        const currentText = statusSpan.innerText;
+        if (currentText === "✅" && status === 'delivered') {
+            return; // Skip this update
+        }
         if (statusSpan) {
             if (status === 'seen') {
                 statusSpan.innerText = "✅"
